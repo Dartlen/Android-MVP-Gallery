@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gallery</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="registration">Register</string>
+    <string name="login">Login</string>
+    <string name="sing_up">SING UP</string>
+
+    <string name="psswd">******</string>
+
+    <string name="log">LOG IN</string>
+    <string name="clear"> </string>
+</resources>
