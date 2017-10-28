@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backg"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/fab_margin"
+    android:paddingTop="75dp">
 
     <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
+        android:layout_width="260dp"
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="match_parent"
+            android:id="@+id/login"
+            android:layout_width="287dp"
             android:layout_height="wrap_content"
-            android:hint="@string/login" />
+            android:layout_margin="0dp"
+            android:layout_marginTop="0dp"
+            android:hint="@string/login"
+            android:inputType="" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
+        android:layout_width="260dp"
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="match_parent"
+            android:id="@+id/password"
+            android:layout_width="287dp"
             android:layout_height="wrap_content"
+            android:layout_margin="0dp"
             android:hint="@string/psswd"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/login"
-        style="@style/Button"/>
+        style="@style/Button"
+        android:layout_width="262dp"
+        android:layout_height="36dp"
+        android:layout_margin="0dp"
+        android:text="@string/login" />
 </LinearLayout>

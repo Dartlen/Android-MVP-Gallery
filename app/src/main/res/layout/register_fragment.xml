@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backg"
+    android:orientation="vertical"
+    android:paddingTop="75dp">
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <EditText
+            android:id="@+id/login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/login" />
+            android:layout_marginTop="0dp"
+            android:hint="@string/login"
+            android:paddingTop="0dp" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -18,10 +24,11 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/psswd"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -29,16 +36,17 @@
         android:layout_height="match_parent">
 
         <EditText
+            android:id="@+id/passwordconfirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/psswd"
             android:inputType="textPassword" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/button"
+            style="@style/Button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="@string/sing_up"
-            style="@style/Button"/>
+            android:text="@string/sing_up" />
     </android.support.design.widget.TextInputLayout>
 </LinearLayout>
