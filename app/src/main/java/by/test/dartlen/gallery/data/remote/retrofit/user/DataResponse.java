@@ -1,4 +1,4 @@
-package by.test.dartlen.gallery.data.remote.retrofit;
+package by.test.dartlen.gallery.data.remote.retrofit.user;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -15,8 +15,6 @@ public class DataResponse {
     @SerializedName("data")
     @Expose
     private Data data;
-
-
 
     public Integer getStatus() {
         return status;

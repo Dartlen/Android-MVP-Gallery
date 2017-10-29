@@ -22,7 +22,7 @@ public final class ApiFactory {
     private ApiFactory() {}
 
     @NonNull
-    public static UserService login() {
+    public static UserService get() {
         UserService service = sService;
         if (service == null) {
             synchronized (ApiFactory.class) {

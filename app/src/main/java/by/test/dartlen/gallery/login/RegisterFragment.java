@@ -15,7 +15,7 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.remote.retrofit.LoginData;
+import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 import by.test.dartlen.gallery.gallery.MainPageActivity;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;

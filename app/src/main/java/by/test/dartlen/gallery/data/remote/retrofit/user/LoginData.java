@@ -1,4 +1,4 @@
-package by.test.dartlen.gallery.data.remote.retrofit;
+package by.test.dartlen.gallery.data.remote.retrofit.user;
 
 /**
  * Created by Dartlen on 26.10.2017.

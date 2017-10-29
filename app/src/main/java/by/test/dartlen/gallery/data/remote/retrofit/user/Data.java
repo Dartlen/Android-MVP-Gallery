@@ -1,4 +1,4 @@
-package by.test.dartlen.gallery.data.remote.retrofit;
+package by.test.dartlen.gallery.data.remote.retrofit.user;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -12,9 +12,11 @@ public class Data {
     @SerializedName("userId")
     @Expose
     private Integer userId;
+
     @SerializedName("login")
     @Expose
     private String login;
+
     @SerializedName("token")
     @Expose
     private String token;

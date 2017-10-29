@@ -1,12 +1,11 @@
 package by.test.dartlen.gallery.login;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
-import by.test.dartlen.gallery.data.remote.retrofit.DataResponse;
-import by.test.dartlen.gallery.data.remote.retrofit.LoginData;
+import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
+import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

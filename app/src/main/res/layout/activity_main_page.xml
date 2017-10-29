@@ -8,6 +8,14 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/fr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.constraint.ConstraintLayout>
+
     <include
         layout="@layout/app_bar_main_page"
         android:layout_width="match_parent"
