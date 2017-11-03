@@ -20,5 +20,6 @@ public interface LoginContract {
         void showMain();
         void showLoginError();
         LoginData getLoginPassword();
+        void showDialog();
     }
 }

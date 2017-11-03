@@ -7,6 +7,8 @@ import org.greenrobot.greendao.annotation.NotNull;
 import java.util.List;
 
 import by.test.dartlen.gallery.data.local.greendao.Users;
+import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponse;
+import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
@@ -15,7 +17,7 @@ import by.test.dartlen.gallery.data.remote.retrofit.user.Data;
 import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
-/**
+/***
  * Created by Dartlen on 26.10.2017.
  */
 

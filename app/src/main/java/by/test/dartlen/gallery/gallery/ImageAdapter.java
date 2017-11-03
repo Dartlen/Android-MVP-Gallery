@@ -2,6 +2,7 @@ package by.test.dartlen.gallery.gallery;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,9 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.OnItemClick;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 
@@ -23,27 +27,24 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> {
 
     private List<Images> mData = new ArrayList<Images>();
     private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
-    private int mImageHeight;
-    private int mImageWidth;
 
-    ImageAdapter(Context context, List<Images> data, int  imageHeight, int imageWidth) {
+    ImageAdapter(Context context, Fragment fragment) {
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-        this.mImageHeight = imageHeight;
-        this.mImageWidth = imageWidth;
     }
 
     @Override
     public ImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.item_image, parent, false);
-        return ImageHolder.create(view.getContext(), mImageHeight, mImageWidth);
+        return ImageHolder.create(view.getContext());
     }
 
     @Override
-    public void onBindViewHolder(ImageHolder holder, int position) {
+    public void onBindViewHolder(ImageHolder holder,final int position) {
         Images animal = mData.get(position);
-        //holder.mTextView.setText(animal);
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        holder.mTextView.setText(formatter.format(animal.getDate()));
+        holder.bind(animal);
+
     }
 
     @Override
@@ -51,11 +52,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> {
         return mData.size();
     }
 
-    public void changeDataSet(@NonNull List<Images> movies) {
-        mData.clear();
-        mData.addAll(movies);
+
+    public void add(Images images) {
+        mData.add(images);
         notifyDataSetChanged();
     }
+
+    /*public void changeDataSet(@NonNull List<Images> images) {
+        mData.clear();
+        mData.addAll(images);
+        notifyDataSetChanged();
+    }*/
     /*public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
 
@@ -75,12 +82,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> {
         return mData.get();
     }*/
 
-    void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
+    public interface OnItemClickListener {
+        void onItemClicked(int position);
     }
 
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
+    public interface OnItemLongClickListener {
+        boolean onItemLongClicked(int position);
     }
 
 }

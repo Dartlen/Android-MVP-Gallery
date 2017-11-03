@@ -10,6 +10,7 @@ import retrofit2.Response;
  */
 
 public class RetrofitResponse<T> implements Callback<T> {
+
     private RetrofitResponseCallback<T> callback;
 
     public RetrofitResponse(RetrofitResponseCallback<T> callback) {

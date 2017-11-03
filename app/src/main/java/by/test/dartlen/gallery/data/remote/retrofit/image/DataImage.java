@@ -14,18 +14,22 @@ public class DataImage {
     @SerializedName("id")
     @Expose
     private Integer id;
+
     @SerializedName("url")
     @Expose
     private String url;
+
     @SerializedName("date")
     @Expose
     private Integer date;
+
     @SerializedName("lat")
     @Expose
-    private Integer lat;
+    private Float lat;
+
     @SerializedName("lng")
     @Expose
-    private Integer lng;
+    private Float lng;
 
     public Integer getId() {
         return id;
@@ -51,19 +55,19 @@ public class DataImage {
         this.date = date;
     }
 
-    public Integer getLat() {
+    public Float getLat() {
         return lat;
     }
 
-    public void setLat(Integer lat) {
+    public void setLat(Float lat) {
         this.lat = lat;
     }
 
-    public Integer getLng() {
+    public Float getLng() {
         return lng;
     }
 
-    public void setLng(Integer lng) {
+    public void setLng(Float lng) {
         this.lng = lng;
     }
 }

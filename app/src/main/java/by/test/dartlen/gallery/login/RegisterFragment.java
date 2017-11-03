@@ -98,4 +98,8 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
         mPresenter.register();
     }
 
+    @Override
+    public void showDialog() {
+
+    }
 }

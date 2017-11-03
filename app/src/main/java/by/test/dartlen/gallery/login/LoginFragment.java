@@ -1,5 +1,7 @@
 package by.test.dartlen.gallery.login;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -95,5 +97,22 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     public void showMain(){
         Intent intent = new Intent(getContext(), MainPageActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void showDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder//.setTitle("Incorrect username or password. ")
+                .setMessage("Incorrect username or password. ")
+                //.setIcon(R.drawable.ic_android_cat)
+                .setCancelable(false)
+                .setNegativeButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

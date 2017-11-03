@@ -8,6 +8,7 @@ import java.util.List;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.local.greendao.Users;
+import by.test.dartlen.gallery.data.remote.mockremote.UserServiceMockAdapter;
 import by.test.dartlen.gallery.data.remote.retrofit.ApiFactory;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
@@ -26,7 +27,7 @@ import retrofit2.Response;
  * Created by Dartlen on 27.10.2017.
  */
 
-public class GalleryRemoteDataSource implements IGalleryRemoteDataSource{
+public class GalleryRemoteDataSource implements GalleryDataSource {
 
     private static GalleryRemoteDataSource INSTANCE;
 
@@ -41,7 +42,8 @@ public class GalleryRemoteDataSource implements IGalleryRemoteDataSource{
 
     @Override
     public void signin(final @NonNull LoadLoginCallback callback, final @NonNull LoginData loginData) {
-        retrofit2.Call<DataResponse> call = ApiFactory.get().Signin(loginData);
+        retrofit2.Call<DataResponse> call = new UserServiceMockAdapter()
+                .swapretrofit(ApiFactory.buildRetrofit()).Signin(loginData);
 
         call.enqueue(new RetrofitResponse<DataResponse>(new RetrofitResponseCallback<DataResponse>() {
             @Override
@@ -74,8 +76,10 @@ public class GalleryRemoteDataSource implements IGalleryRemoteDataSource{
     }
 
     @Override
-    public void getImages(final @NotNull LoadImageCallback callback, final @NotNull int page, final @NotNull String token) {
-        final retrofit2.Call<ResponseDataImage> call = ApiFactory.get().getImages(page, token);
+    public void getImages(final @NotNull LoadImageCallback callback, final @NotNull int page,
+                          final @NotNull String token) {
+        final retrofit2.Call<ResponseDataImage> call = new UserServiceMockAdapter()
+                .swapretrofit(ApiFactory.buildRetrofit()).getImages(page, token);
         call.enqueue(new RetrofitResponse<ResponseDataImage>(new RetrofitResponseCallback<ResponseDataImage>() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
@@ -87,7 +91,6 @@ public class GalleryRemoteDataSource implements IGalleryRemoteDataSource{
                 callback.onError(error);
             }
         }));
-
 
     }
 

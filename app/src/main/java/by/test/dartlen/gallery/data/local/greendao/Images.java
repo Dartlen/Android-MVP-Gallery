@@ -31,16 +31,15 @@ public class Images {
     private Integer date;
 
     @NotNull
-    private Integer lat;
+    private Float lat;
 
     @NotNull
-    private Integer lng;
+    private Float lng;
 
     private long userId;
 
     @ToOne(joinProperty = "userId")
     private Users user;
-
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -50,9 +49,11 @@ public class Images {
     @Generated(hash = 887756292)
     private transient ImagesDao myDao;
 
-    @Generated(hash = 1014212628)
-    public Images(Long id, @NotNull String url, @NotNull Integer date,
-            @NotNull Integer lat, @NotNull Integer lng, long userId) {
+
+
+    @Generated(hash = 859754519)
+    public Images(Long id, @NotNull String url, @NotNull Integer date, @NotNull Float lat,
+            @NotNull Float lng, long userId) {
         this.id = id;
         this.url = url;
         this.date = date;
@@ -64,6 +65,11 @@ public class Images {
     @Generated(hash = 1787213703)
     public Images() {
     }
+
+    @Generated(hash = 251390918)
+    private transient Long user__resolvedKey;
+
+
 
     public Long getId() {
         return this.id;
@@ -89,19 +95,19 @@ public class Images {
         this.date = date;
     }
 
-    public Integer getLat() {
+    public Float getLat() {
         return this.lat;
     }
 
-    public void setLat(Integer lat) {
+    public void setLat(Float lat) {
         this.lat = lat;
     }
 
-    public Integer getLng() {
+    public Float getLng() {
         return this.lng;
     }
 
-    public void setLng(Integer lng) {
+    public void setLng(Float lng) {
         this.lng = lng;
     }
 
@@ -112,9 +118,6 @@ public class Images {
     public void setUserId(long userId) {
         this.userId = userId;
     }
-
-    @Generated(hash = 251390918)
-    private transient Long user__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 809425850)
@@ -191,5 +194,7 @@ public class Images {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getImagesDao() : null;
     }
+
+
 
 }

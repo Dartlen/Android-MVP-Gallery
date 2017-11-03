@@ -9,8 +9,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import by.test.dartlen.gallery.data.local.greendao.Users;
-import by.test.dartlen.gallery.data.remote.IGalleryRemoteDataSource;
-import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
@@ -27,17 +25,17 @@ public class GalleryRepository implements GalleryDataSource{
 
     private static GalleryRepository INSTANCE = null;
 
-    private final IGalleryRemoteDataSource mGalleryRemoteDataSource;
+    private final GalleryDataSource mGalleryRemoteDataSource;
 
     private final GalleryDataSource mGalleryLocalDataSource;
 
-    private  GalleryRepository(@NonNull IGalleryRemoteDataSource galleryRemoteDataSource,
+    private  GalleryRepository(@NonNull GalleryDataSource galleryRemoteDataSource,
                                @NonNull GalleryDataSource galleryLocalDataSource){
         mGalleryRemoteDataSource = checkNotNull(galleryRemoteDataSource);
         mGalleryLocalDataSource = checkNotNull(galleryLocalDataSource);
     }
 
-    public static GalleryRepository getInstance(IGalleryRemoteDataSource galleryRemoteDataSource,
+    public static GalleryRepository getInstance(GalleryDataSource galleryRemoteDataSource,
                                                 GalleryDataSource galleryLocalDataSource){
         if(INSTANCE == null){
             INSTANCE = new GalleryRepository(galleryRemoteDataSource, galleryLocalDataSource);
@@ -81,8 +79,12 @@ public class GalleryRepository implements GalleryDataSource{
 
     @Override
     public void getImages(final @NonNull LoadImageCallback callback, final @NotNull int page, final @NotNull String token) {
-        //getRemoteImages(callback, page, token);
-        mGalleryLocalDataSource.getImages(new LoadImageCallback() {
+
+
+        getRemoteImages(callback, page, token);
+
+
+        /*mGalleryLocalDataSource.getImages(new LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
 
@@ -92,11 +94,12 @@ public class GalleryRepository implements GalleryDataSource{
             public void onError(String error) {
 
             }
-        },page ,token );
+        },page ,token );*/
     }
 
 
-    public void getRemoteImages(final @NonNull LoadImageCallback callback, final @NotNull int page, final @NotNull String token){
+    public void getRemoteImages(final @NonNull LoadImageCallback callback, final @NotNull int page,
+                                final @NotNull String token){
         mGalleryRemoteDataSource.getImages(new LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {

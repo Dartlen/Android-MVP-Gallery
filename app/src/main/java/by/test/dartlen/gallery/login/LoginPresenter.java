@@ -1,6 +1,7 @@
 package by.test.dartlen.gallery.login;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
@@ -14,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoginPresenter implements LoginContract.Presenter{
 
-    private final GalleryRepository mGalleryRepository;
+    private final GalleryDataSource mGalleryRepository;
     private final LoginContract.View mLoginView;
     private final LoginContract.View mRegisterView;
 
@@ -62,10 +63,13 @@ public class LoginPresenter implements LoginContract.Presenter{
 
             @Override
             public void onDataNotAvailable(String error) {
-
+                Log.d("bol","okkk");
+                mLoginView.showDialog();
             }
         },ld);
     }
+
+
 }
 
 

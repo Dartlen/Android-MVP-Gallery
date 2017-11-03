@@ -2,12 +2,14 @@ package by.test.dartlen.gallery.gallery;
 
 
 import android.content.Context;
+import android.view.View;
 
 import java.util.List;
 
 import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
 import by.test.dartlen.gallery.data.local.greendao.Images;
+import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.login.LoginContract;
 
 /**
@@ -21,9 +23,9 @@ public interface GalleryContract {
         void postImage();
     }
 
-    interface View extends BaseView<GalleryContract.Presenter>{
-        void showImages(List<Images> data);
-        void showLogin(Context context);
+    interface View extends BaseView<GalleryContract.Presenter> {
+        void showImages(List<DataImage> data);
+
     }
 
 

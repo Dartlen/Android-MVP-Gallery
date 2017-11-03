@@ -29,12 +29,15 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         mGalleryView = checkNotNull(galleryView, "galleryView cannot be null!");
 
         mGalleryView.setPresenter(this);
-        //postImage();
+        Log.d("okk","Gallery init");
         loadImages();
+        //postImage();
+        //loadImages();
     }
 
     @Override
     public void start() {
+
         //mGalleryView.showLogin();
     }
 
@@ -43,16 +46,16 @@ public class GalleryPresenter implements GalleryContract.Presenter {
 
         String token = "TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3";
         int page = 1;
-
+        //String token = mGalleryRepository.getUser().getToken();
         mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
-                //mGalleryView.showImages(dataResponse.getData());
+                mGalleryView.showImages(dataResponse.getData());
             }
 
             @Override
             public void onError(String error) {
-
+                Log.d("okk","loading images error");
             }
         },page,token);
     }
@@ -77,4 +80,6 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         }, token, data);
 
     }
+
+
 }

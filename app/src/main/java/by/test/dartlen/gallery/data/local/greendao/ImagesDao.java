@@ -28,8 +28,8 @@ public class ImagesDao extends AbstractDao<Images, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Url = new Property(1, String.class, "url", false, "URL");
         public final static Property Date = new Property(2, Integer.class, "date", false, "DATE");
-        public final static Property Lat = new Property(3, Integer.class, "lat", false, "LAT");
-        public final static Property Lng = new Property(4, Integer.class, "lng", false, "LNG");
+        public final static Property Lat = new Property(3, Float.class, "lat", false, "LAT");
+        public final static Property Lng = new Property(4, Float.class, "lng", false, "LNG");
         public final static Property UserId = new Property(5, long.class, "userId", false, "USER_ID");
     }
 
@@ -52,11 +52,11 @@ public class ImagesDao extends AbstractDao<Images, Long> {
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"URL\" TEXT NOT NULL ," + // 1: url
                 "\"DATE\" INTEGER NOT NULL ," + // 2: date
-                "\"LAT\" INTEGER NOT NULL ," + // 3: lat
-                "\"LNG\" INTEGER NOT NULL ," + // 4: lng
+                "\"LAT\" REAL NOT NULL ," + // 3: lat
+                "\"LNG\" REAL NOT NULL ," + // 4: lng
                 "\"USER_ID\" INTEGER NOT NULL );"); // 5: userId
         // Add Indexes
-        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_Images_URL ON Images" +
+        db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_Images_URL ON \"Images\"" +
                 " (\"URL\" ASC);");
     }
 
@@ -76,8 +76,8 @@ public class ImagesDao extends AbstractDao<Images, Long> {
         }
         stmt.bindString(2, entity.getUrl());
         stmt.bindLong(3, entity.getDate());
-        stmt.bindLong(4, entity.getLat());
-        stmt.bindLong(5, entity.getLng());
+        stmt.bindDouble(4, entity.getLat());
+        stmt.bindDouble(5, entity.getLng());
         stmt.bindLong(6, entity.getUserId());
     }
 
@@ -91,8 +91,8 @@ public class ImagesDao extends AbstractDao<Images, Long> {
         }
         stmt.bindString(2, entity.getUrl());
         stmt.bindLong(3, entity.getDate());
-        stmt.bindLong(4, entity.getLat());
-        stmt.bindLong(5, entity.getLng());
+        stmt.bindDouble(4, entity.getLat());
+        stmt.bindDouble(5, entity.getLng());
         stmt.bindLong(6, entity.getUserId());
     }
 
@@ -113,8 +113,8 @@ public class ImagesDao extends AbstractDao<Images, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // url
             cursor.getInt(offset + 2), // date
-            cursor.getInt(offset + 3), // lat
-            cursor.getInt(offset + 4), // lng
+            cursor.getFloat(offset + 3), // lat
+            cursor.getFloat(offset + 4), // lng
             cursor.getLong(offset + 5) // userId
         );
         return entity;
@@ -125,8 +125,8 @@ public class ImagesDao extends AbstractDao<Images, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUrl(cursor.getString(offset + 1));
         entity.setDate(cursor.getInt(offset + 2));
-        entity.setLat(cursor.getInt(offset + 3));
-        entity.setLng(cursor.getInt(offset + 4));
+        entity.setLat(cursor.getFloat(offset + 3));
+        entity.setLng(cursor.getFloat(offset + 4));
         entity.setUserId(cursor.getLong(offset + 5));
      }
     

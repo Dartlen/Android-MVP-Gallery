@@ -17,9 +17,13 @@ public final class ApiFactory {
 
     private static OkHttpClient sClient;
 
+    private static Retrofit mRetrofit;
+
     private static volatile UserService sService;
 
     private ApiFactory() {}
+
+
 
     @NonNull
     public static UserService get() {
@@ -36,13 +40,13 @@ public final class ApiFactory {
     }
 
     @NonNull
-    private static Retrofit buildRetrofit() {
-
-        return new Retrofit.Builder()
+    public static Retrofit buildRetrofit() {
+        mRetrofit = new Retrofit.Builder()
                 .baseUrl(ROOT_URL)
                 .client(getClient())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        return mRetrofit;
     }
 
     @NonNull
@@ -65,4 +69,5 @@ public final class ApiFactory {
                 .addInterceptor(new HttpLoggingInterceptor())
                 .build();
     }
+
 }
