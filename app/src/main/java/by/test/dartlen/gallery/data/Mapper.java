@@ -42,24 +42,34 @@ public class Mapper {
     }
 
     public List<Images> toImagesFromDataImages(List<DataImage> dataImages){
-        List<Images> result = new ArrayList<Images>(0);
-        for (DataImage obj: dataImages)
-            result.add(
-                    new Images(null, obj.getUrl(), obj.getDate(), obj.getLat(), obj.getLng(),
-                            user.getId()));
-        return result;}
+        if(dataImages==null || dataImages.size()==0){
+            return new ArrayList<Images>(0);
+        }else{
+            List<Images> result = new ArrayList<Images>(0);
+            for (DataImage obj: dataImages)
+                result.add(
+                        new Images(null, obj.getUrl(), obj.getDate(), obj.getLat(), obj.getLng(),
+                                user.getId()));
+            return result;
+        }
+    }
 
         //TODO: проверить работоспособность
     public List<DataImage> toDataImagefromImages(List<Images> images){
-        List<DataImage> result = new ArrayList<DataImage>(0);
-        for (Images obj: images){
-            DataImage tmpDataImage = new DataImage();
-            tmpDataImage.setId(1);
-            tmpDataImage.setUrl(obj.getUrl());
-            tmpDataImage.setDate(obj.getDate());
-            tmpDataImage.setLat(obj.getLat());
-            tmpDataImage.setLng(obj.getLng());
-            result.add(tmpDataImage);
+        if(images == null || images.size()== 0 ){
+            return new ArrayList<DataImage>(0);
+        }else{
+            List<DataImage> result = new ArrayList<DataImage>(0);
+            for (Images obj: images){
+                DataImage tmpDataImage = new DataImage();
+                tmpDataImage.setId(1);
+                tmpDataImage.setUrl(obj.getUrl());
+                tmpDataImage.setDate(obj.getDate());
+                tmpDataImage.setLat(obj.getLat());
+                tmpDataImage.setLng(obj.getLng());
+                result.add(tmpDataImage);
+            }
+            return result;
         }
-        return result;}
+        }
 }

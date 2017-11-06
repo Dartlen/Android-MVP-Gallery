@@ -36,7 +36,7 @@ public class MockUserServiceResponse implements UserService{
     @Override
     public Call<DataResponse> Signin(LoginData data) {
 
-        if(data.getLogin().equals("dartlen2")&&data.getPassword().equals("12345678")) {
+        if(data.getLogin().equals("")&&data.getPassword().equals("")) {
             DataResponse dataResponse = new DataResponse();
             Data dater = new Data();
             dataResponse.setStatus(200);
@@ -92,7 +92,8 @@ public class MockUserServiceResponse implements UserService{
 
     @Override
     public Call<ResponseDataImage> getImages(int p, String token) {
-        if(token.equals("TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3")){
+        if(token.equals("TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3")
+                && p==1){
             ResponseDataImage responseDataImage = new ResponseDataImage();
             DataImage dataImage = new DataImage();
             responseDataImage.setStatus(200);
@@ -107,13 +108,58 @@ public class MockUserServiceResponse implements UserService{
             dataImage1.setLng(27.552601f);
             dataImage1.setLat(53.910766f);
             dataImage1.setDate(112222222);
+
+            DataImage dataImage2 = new DataImage();
+            dataImage2.setUrl("http://flytothesky.ru/wp-content/uploads/2013/08/4-600x450.jpeg");
+            dataImage2.setId(1);
+            dataImage2.setLng(27.552601f);
+            dataImage2.setLat(53.910766f);
+            dataImage2.setDate(112222222);
+
+            DataImage dataImage3 = new DataImage();
+            dataImage3.setUrl("http://flytothesky.ru/wp-content/uploads/2013/08/4-600x450.jpeg");
+            dataImage3.setId(1);
+            dataImage3.setLng(27.552601f);
+            dataImage3.setLat(53.910766f);
+            dataImage3.setDate(112222222);
+
+            DataImage dataImage4 = new DataImage();
+            dataImage4.setUrl("http://flytothesky.ru/wp-content/uploads/2013/08/4-600x450.jpeg");
+            dataImage4.setId(1);
+            dataImage4.setLng(27.552601f);
+            dataImage4.setLat(53.910766f);
+            dataImage4.setDate(112222222);
+            List<DataImage> list = new ArrayList<DataImage>();
+            list.add(dataImage);
+            list.add(dataImage1);
+            list.add(dataImage2);
+            list.add(dataImage3);
+            list.add(dataImage4);
+            responseDataImage.setData(list);
+            return delegate.returning(Calls.response(responseDataImage)).getImages(p, token);
+        }else if (token.equals("TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3")
+                && p==2){
+            ResponseDataImage responseDataImage = new ResponseDataImage();
+            DataImage dataImage = new DataImage();
+            responseDataImage.setStatus(200);
+            dataImage.setUrl("https://cs8.pikabu.ru/post_img/2016/01/18/5/1453101874187862206.jpg");
+            dataImage.setId(1);
+            dataImage.setLng(27.6222f);
+            dataImage.setLat(53.8864f);
+            dataImage.setDate(11222222);
+            DataImage dataImage1 = new DataImage();
+            dataImage1.setUrl("http://flytothesky.ru/wp-content/uploads/2013/08/4-600x450.jpeg");
+            dataImage1.setId(1);
+            dataImage1.setLng(27.5521f);
+            dataImage1.setLat(53.910766f);
+            dataImage1.setDate(11222222);
             List<DataImage> list = new ArrayList<DataImage>();
             list.add(dataImage);
             list.add(dataImage1);
             responseDataImage.setData(list);
             return delegate.returning(Calls.response(responseDataImage)).getImages(p, token);
         }
-        return null;
+        return delegate.returning(Calls.response(new ResponseDataImage())).getImages(p, token);
     }
 
     @Override

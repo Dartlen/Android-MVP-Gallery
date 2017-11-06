@@ -7,6 +7,7 @@ import java.util.Date;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
+import by.test.dartlen.gallery.data.Mapper;
 import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
@@ -29,8 +30,8 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         mGalleryView = checkNotNull(galleryView, "galleryView cannot be null!");
 
         mGalleryView.setPresenter(this);
-        Log.d("okk","Gallery init");
-        loadImages();
+        //Log.d("okk","Gallery init");
+        //loadImages();
         //postImage();
         //loadImages();
     }
@@ -42,7 +43,7 @@ public class GalleryPresenter implements GalleryContract.Presenter {
     }
 
     @Override
-    public void loadImages() {
+    public void loadFirstPage() {
 
         String token = "TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3";
         int page = 1;
@@ -50,7 +51,7 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
-                mGalleryView.showImages(dataResponse.getData());
+                mGalleryView.showFirstPage(dataResponse.getData());
             }
 
             @Override
@@ -60,6 +61,24 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         },page,token);
     }
 
+
+    @Override
+    public void loadNextPage(int currentPage, final GalleryContract.CallbackImages callbackImages) {
+        String token = "TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3";
+
+        //String token = mGalleryRepository.getUser().getToken();
+        mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
+            @Override
+            public void onDataLoaded(ResponseDataImage dataResponse) {
+               callbackImages.load(dataResponse.getData());
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d("okk","loading images error");
+            }
+        },currentPage ,token);
+    }
 
     @Override
     public void postImage() {

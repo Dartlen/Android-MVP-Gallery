@@ -87,7 +87,6 @@ public class GalleryLocalDataSource implements GalleryDataSource{
             mImagesDao.insertOrReplace(
                     new Images(null, obj.getUrl(), obj.getDate(), obj.getLat(), obj.getLng(),
                             userId.get(0).getId()));*/
-
     }
 
     @Override
@@ -125,7 +124,5 @@ public class GalleryLocalDataSource implements GalleryDataSource{
         {
             return null;
         }
-
     }
-
 }

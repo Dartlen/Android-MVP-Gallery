@@ -1,9 +1,11 @@
 package by.test.dartlen.gallery.gallery;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +27,7 @@ import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.Mapper;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
+import by.test.dartlen.gallery.util.PaginationScrollListener;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -32,20 +35,22 @@ import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
  * Created by Dartlen on 28.10.2017.
  */
 
-public class GalleryFragment extends Fragment implements GalleryContract.View, AddItemsImage.OnAddItemListener
-         {
+public class GalleryFragment extends Fragment implements GalleryContract.View{
 
     private GalleryContract.Presenter mPresenter;
+
     private Mapper mapper;
 
-    public int NUM_ITEMS_PAGE = 3;
+    private static final int PAGE_START = 1;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private int currentPage = PAGE_START;
 
-    private ImageAdapter mImageAdapter;
-    private List<Images> listList;
-    private int paginationCounter = 0;
+    private ImageAdapter adapter;
+    private LinearLayoutManager linearLayoutManager;
 
-    @BindView(R.id.recycleView)
-    RecyclerView recycleView;
+    @BindView(R.id.recyclerView)
+    RecyclerView recyclerView;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
@@ -63,14 +68,15 @@ public class GalleryFragment extends Fragment implements GalleryContract.View, A
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mImageAdapter = new ImageAdapter(getContext(),this);
+
         mapper = new Mapper(getContext());
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //paginationCounter=0;
+
     }
 
     @Override
@@ -85,13 +91,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View, A
 
         ButterKnife.bind(this, root);
 
-        recycleViewSetup(recycleView);
-
-        recycleView.setAdapter(mImageAdapter);
-
-        mPresenter.loadImages();
-
-        ItemClickSupport.addTo(recycleView)
+        ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -99,63 +99,68 @@ public class GalleryFragment extends Fragment implements GalleryContract.View, A
                     }
                 });
 
-        ItemClickSupport.addTo(recycleView)
+        ItemClickSupport.addTo(recyclerView)
                 .setOnItemLongClickListener(new ItemClickSupport.OnItemLongClickListener() {
                     @Override
                     public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
+
                         return true;
                     }
                 });
+        adapter = new ImageAdapter(getContext());
 
-        recycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        linearLayoutManager = new LinearLayoutManager(getContext());
+
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        GridLayoutManager mGridLayout = new GridLayoutManager(getContext(), 3);
+        recyclerView.setLayoutManager(mGridLayout);
+
+        recyclerView.setAdapter(adapter);
+
+        recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
-                int totalItemCount = layoutManager.getItemCount();
-                int lastVisible = layoutManager.findLastVisibleItemPosition();
+            protected void loadMoreItems() {
+                isLoading = true;
+                currentPage += 1;
 
-                boolean endHasBeenReached = lastVisible + 3 >= totalItemCount;
-                if (totalItemCount > 0 && endHasBeenReached) {
-                    new AddItemsImage(GalleryFragment.this).execute();
-                }
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        mPresenter.loadNextPage(currentPage, new GalleryContract.CallbackImages() {
+                            @Override
+                            public void load(List<DataImage> result) {
+                                isLoading = false;
+                                List<Images> tmpimages = mapper.toImagesFromDataImages(result);
+                                adapter.addAll(tmpimages);
+
+                                adapter.removeLoadingFooter();
+                            }
+                        });
+                    }
+                }, 1000);
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return isLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
             }
         });
+
+        mPresenter.loadFirstPage();
 
         return root;
     }
 
-    public void recycleViewSetup(RecyclerView recyclerView) {
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        GridLayoutManager mGridLayout = new GridLayoutManager(getContext(), 3);
-        recyclerView.setLayoutManager(mGridLayout);
-    }
-
     @Override
-    public void showImages(List<DataImage> data) {
-        this.listList = mapper.toImagesFromDataImages(data);
-        addItemToAdapter();
-    }
-
-    private void addItemToAdapter() {
-        paginationCounter += NUM_ITEMS_PAGE;
-        for (int i = paginationCounter - NUM_ITEMS_PAGE; i < paginationCounter; i++) {
-            progressBar.setVisibility(View.VISIBLE);
-            if (i < listList.size() && listList.get(i) != null)
-                mImageAdapter.add( listList.get(i));
-        }
-    }
-
-    @Override
-    public void onFinishImage() {
-        addItemToAdapter();
+    public void showFirstPage(List<DataImage> result) {
         progressBar.setVisibility(View.GONE);
-    }
+        adapter.addAll(mapper.toImagesFromDataImages(result));
 
-    @Override
-    public void onStartImage() {
-        progressBar.setVisibility(View.VISIBLE);
     }
-
 }

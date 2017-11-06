@@ -19,15 +19,17 @@ import by.test.dartlen.gallery.login.LoginContract;
 public interface GalleryContract {
 
     interface Presenter extends BasePresenter {
-        void loadImages();
+        void loadNextPage(int currentPage, CallbackImages callbackX);
+        void loadFirstPage();
         void postImage();
     }
 
     interface View extends BaseView<GalleryContract.Presenter> {
-        void showImages(List<DataImage> data);
-
+        void showFirstPage(List<DataImage> results);
     }
 
-
+    interface CallbackImages{
+        void load(List<DataImage> results);
+    }
 
 }

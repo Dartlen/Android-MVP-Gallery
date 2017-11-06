@@ -8,7 +8,6 @@ import android.content.Context;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,12 +37,10 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
         imageView.requestLayout();
 
-
-
         return new ImageHolder(view);
     }
 
-    private ImageHolder(View itemView) {
+    public ImageHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
 
@@ -52,7 +49,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
     public void bind(@NonNull Images images) {
         Image.loadImage(mImageView, images.getUrl());
     }
-
 
 }
 

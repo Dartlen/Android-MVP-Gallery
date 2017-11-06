@@ -2,20 +2,13 @@ package by.test.dartlen.gallery.gallery;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.OnItemClick;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 
@@ -23,71 +16,136 @@ import by.test.dartlen.gallery.data.local.greendao.Images;
  * Created by Dartlen on 29.10.2017.
  */
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageHolder> {
+public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Images> mData = new ArrayList<Images>();
-    private LayoutInflater mInflater;
+    private static final int ITEM = 0;
+    private static final int LOADING = 1;
 
-    ImageAdapter(Context context, Fragment fragment) {
-        this.mInflater = LayoutInflater.from(context);
+    private List<Images> ImagesList;
+    private Context context;
+    private boolean isLoadingAdded = false;
+
+    public ImageAdapter(Context context) {
+        this.context = context;
+        ImagesList = new ArrayList<>();
     }
 
     @Override
-    public ImageHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.item_image, parent, false);
-        return ImageHolder.create(view.getContext());
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+
+        switch (viewType) {
+            case ITEM:
+                viewHolder = getViewHolder(parent, inflater);
+                break;
+            case LOADING:
+                View v2 = inflater.inflate(R.layout.item_progress, parent, false);
+                viewHolder = new LoadingVH(v2);
+                break;
+        }
+        return viewHolder;
+    }
+
+    @NonNull
+    private RecyclerView.ViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
+        ImageHolder viewHolder;
+        View v1 = inflater.inflate(R.layout.item_image, parent, false);
+        viewHolder = new ImageHolder(v1);
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(ImageHolder holder,final int position) {
-        Images animal = mData.get(position);
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        holder.mTextView.setText(formatter.format(animal.getDate()));
-        holder.bind(animal);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
+        Images result = ImagesList.get(position); // Movie
+
+        switch (getItemViewType(position)) {
+            case ITEM:
+                final ImageHolder movieVH = (ImageHolder) holder;
+                Images animal = ImagesList.get(position);
+                //DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                //movieVH.mTextView.setText(animal.getDate());
+                movieVH.bind(animal);
+                //movieVH.mMovieTitle.setText(result.getTitle());
+                break;
+
+            case LOADING:
+
+                break;
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return ImagesList == null ? 0 :ImagesList.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (position == ImagesList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
 
-    public void add(Images images) {
-        mData.add(images);
-        notifyDataSetChanged();
+    public void add(Images r) {
+        ImagesList.add(r);
+        notifyItemInserted(ImagesList.size() - 1);
     }
 
-    /*public void changeDataSet(@NonNull List<Images> images) {
-        mData.clear();
-        mData.addAll(images);
-        notifyDataSetChanged();
-    }*/
-    /*public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+    public void addAll(List<Images> imageslist) {
+        for (Images result : imageslist) {
+            add(result);
+        }
+    }
 
-        ViewHolder(View itemView) {
+    public void remove(Images r) {
+        int position = ImagesList.indexOf(r);
+        if (position > -1) {
+            ImagesList.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        isLoadingAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+
+    public void addLoadingFooter() {
+        isLoadingAdded = true;
+        add(new Images());
+    }
+
+    public void removeLoadingFooter() {
+        isLoadingAdded = false;
+
+        int position = ImagesList.size() - 1;
+        Images result = getItem(position);
+
+        if (result != null && result.equals(getItem(0))) {
+            ImagesList.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public Images getItem(int position) {
+        return ImagesList.get(position);
+    }
+
+    protected class LoadingVH extends RecyclerView.ViewHolder {
+
+        public LoadingVH(View itemView) {
             super(itemView);
-            myTextView = (TextView) itemView.findViewById(R.id.info_text);
-            itemView.setOnClickListener(this);
         }
-
-        @Override
-        public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
-        }
-    }*/
-
-    /*String getItem(int id) {
-        return mData.get();
-    }*/
-
-    public interface OnItemClickListener {
-        void onItemClicked(int position);
     }
-
-    public interface OnItemLongClickListener {
-        boolean onItemLongClicked(int position);
-    }
-
 }
+
+
+
