@@ -1,17 +1,23 @@
 package by.test.dartlen.gallery.util;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /***
  * Created by Dartlen on 03.11.2017.
  */
 public abstract class PaginationScrollListener extends RecyclerView.OnScrollListener {
 
-    LinearLayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
+    private int currentpage=1;
 
+    private int visibleItemCount;
+    private int totalItemCount;
+    private int firstVisibleItemPosition;
 
-    public PaginationScrollListener(LinearLayoutManager layoutManager) {
+    protected PaginationScrollListener(LinearLayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }
 
@@ -19,23 +25,25 @@ public abstract class PaginationScrollListener extends RecyclerView.OnScrollList
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
 
-        int visibleItemCount = layoutManager.getChildCount();
-        int totalItemCount = layoutManager.getItemCount();
-        int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        visibleItemCount = layoutManager.getChildCount();
+        totalItemCount = layoutManager.getItemCount();
+        firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
         if (!isLoading() && !isLastPage()) {
-            /*if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                    && firstVisibleItemPosition >= 0) {
-                loadMoreItems();
-            }*/
+            if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0
+                    && totalItemCount >= 2) {
+                currentpage++;
+                loadMoreItems(currentpage);
+            }
         }
-
     }
 
-    protected abstract void loadMoreItems();
+    protected abstract void loadMoreItems(int currentpage);
 
     public abstract boolean isLastPage();
 
     public abstract boolean isLoading();
+
 
 }

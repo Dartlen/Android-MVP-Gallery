@@ -42,6 +42,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     private Mapper mapper;
 
     private static final int PAGE_START = 1;
+    private static final int TOTAL_PAGE = 3;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int currentPage = PAGE_START;
@@ -53,6 +54,8 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     RecyclerView recyclerView;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView(R.id.progressBar2)
+    ProgressBar progressBarImages;
 
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
@@ -76,7 +79,8 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @Override
     public void onResume() {
         super.onResume();
-
+        isLastPage=false;
+        isLoading=false;
     }
 
     @Override
@@ -95,7 +99,6 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-
                     }
                 });
 
@@ -107,6 +110,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                         return true;
                     }
                 });
+
         adapter = new ImageAdapter(getContext());
 
         linearLayoutManager = new LinearLayoutManager(getContext());
@@ -117,26 +121,37 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
         recyclerView.setAdapter(adapter);
 
-        recyclerView.addOnScrollListener(new PaginationScrollListener(linearLayoutManager) {
+        recyclerView.addOnScrollListener(new PaginationScrollListener(mGridLayout) {
             @Override
-            protected void loadMoreItems() {
+            protected void loadMoreItems(final int page) {
                 isLoading = true;
-                currentPage += 1;
+
+
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
 
-                        mPresenter.loadNextPage(currentPage, new GalleryContract.CallbackImages() {
+                        progressBarImages.setVisibility(View.VISIBLE);
+
+                        mPresenter.loadNextPage(page, new GalleryContract.CallbackImages() {
                             @Override
                             public void load(List<DataImage> result) {
+
                                 isLoading = false;
+
                                 List<Images> tmpimages = mapper.toImagesFromDataImages(result);
+                                if(tmpimages.size()==0)
+                                    isLastPage=true;
                                 adapter.addAll(tmpimages);
 
-                                adapter.removeLoadingFooter();
+                                progressBarImages.setVisibility(View.INVISIBLE);
+                                //adapter.addLoadingFooter();
+                                //adapter.removeLoadingFooter();
+
                             }
                         });
+
                     }
                 }, 1000);
             }
@@ -145,6 +160,8 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
             public boolean isLastPage() {
                 return isLastPage;
             }
+
+
 
             @Override
             public boolean isLoading() {
@@ -159,8 +176,13 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
     @Override
     public void showFirstPage(List<DataImage> result) {
-        progressBar.setVisibility(View.GONE);
+        //progressBar.setVisibility(View.GONE);
+
         adapter.addAll(mapper.toImagesFromDataImages(result));
 
+
+        //if (currentPage <= TOTAL_PAGE) adapter.addLoadingFooter();
+        //else isLastPage = true;
+        progressBar.setVisibility(View.INVISIBLE);
     }
 }

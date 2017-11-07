@@ -6,6 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,16 +61,15 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        Images result = ImagesList.get(position); // Movie
+        //Images result = ImagesList.get(position);
 
         switch (getItemViewType(position)) {
             case ITEM:
-                final ImageHolder movieVH = (ImageHolder) holder;
+                final ImageHolder image = (ImageHolder) holder;
                 Images animal = ImagesList.get(position);
-                //DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                //movieVH.mTextView.setText(animal.getDate());
-                movieVH.bind(animal);
-                //movieVH.mMovieTitle.setText(result.getTitle());
+                DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                image.mTextView.setText(formatter.format(animal.getDate()));
+                image.bind(animal);
                 break;
 
             case LOADING:
