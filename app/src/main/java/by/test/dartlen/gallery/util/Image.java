@@ -1,11 +1,15 @@
 package by.test.dartlen.gallery.util;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import by.test.dartlen.gallery.BuildConfig;
+import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.gallery.MainPageActivity;
 
@@ -23,17 +27,41 @@ public final class Image {
         loadImage(imageView, images.getUrl());
     }
 
-    public static void loadImage(@NonNull ImageView imageView, @NonNull String url) {
+    public static void loadImage(@NonNull final ImageView imageView, @NonNull final String url) {
         Picasso.with(imageView.getContext())
                 .load(url)
-                .noFade()
-                .into(imageView);
+                .networkPolicy(NetworkPolicy.OFFLINE)
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        //Try again online if cache failed
+                        Picasso.with(MainPageActivity.getAppContext())
+                                .load(url)
+                                .error(R.drawable.avd_hide_password_1)
+                                .into(imageView, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+
+                                    }
+
+                                    @Override
+                                    public void onError() {
+
+                                    }
+                                });
+                    }
+                });
     }
 
-    public static void fetch(@NonNull String url) {
-        Picasso.with(MainPageActivity.getAppContext())
+    /*public static void fetch(@NonNull String url) {
+        Picasso.with(this)
                 .load(url)
                 .fetch();
-    }
+    }*/
 }
 

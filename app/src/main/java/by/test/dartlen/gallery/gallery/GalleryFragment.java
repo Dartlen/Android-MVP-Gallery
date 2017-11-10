@@ -42,10 +42,8 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     private Mapper mapper;
 
     private static final int PAGE_START = 1;
-    private static final int TOTAL_PAGE = 3;
     private boolean isLoading = false;
     private boolean isLastPage = false;
-    private int currentPage = PAGE_START;
 
     private ImageAdapter adapter;
     private LinearLayoutManager linearLayoutManager;
@@ -71,14 +69,14 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mapper = new Mapper(getContext());
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        if(!isLastPage)
+            mPresenter.start();
         isLastPage=false;
         isLoading=false;
     }
@@ -126,8 +124,6 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
             protected void loadMoreItems(final int page) {
                 isLoading = true;
 
-
-
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -137,17 +133,12 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                         mPresenter.loadNextPage(page, new GalleryContract.CallbackImages() {
                             @Override
                             public void load(List<DataImage> result) {
-
                                 isLoading = false;
-
                                 List<Images> tmpimages = mapper.toImagesFromDataImages(result);
                                 if(tmpimages.size()==0)
                                     isLastPage=true;
                                 adapter.addAll(tmpimages);
-
                                 progressBarImages.setVisibility(View.INVISIBLE);
-                                //adapter.addLoadingFooter();
-                                //adapter.removeLoadingFooter();
 
                             }
                         });
@@ -161,28 +152,17 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                 return isLastPage;
             }
 
-
-
             @Override
             public boolean isLoading() {
                 return isLoading;
             }
         });
-
-        mPresenter.loadFirstPage();
-
         return root;
     }
 
     @Override
     public void showFirstPage(List<DataImage> result) {
-        //progressBar.setVisibility(View.GONE);
-
         adapter.addAll(mapper.toImagesFromDataImages(result));
-
-
-        //if (currentPage <= TOTAL_PAGE) adapter.addLoadingFooter();
-        //else isLastPage = true;
         progressBar.setVisibility(View.INVISIBLE);
     }
 }

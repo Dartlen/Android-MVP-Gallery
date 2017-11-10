@@ -63,7 +63,6 @@ public class LoginPresenter implements LoginContract.Presenter{
 
             @Override
             public void onDataNotAvailable(String error) {
-                Log.d("bol","okkk");
                 mLoginView.showDialog();
             }
         },ld);

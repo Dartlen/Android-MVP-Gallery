@@ -6,13 +6,12 @@ import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
 
-/**
+/***
  * Created by Dartlen on 02.11.2017.
  */
 
 public class UserServiceMockAdapter {
     private MockRetrofit mockRetrofit;
-
 
     public UserService swapretrofit(Retrofit ret){
         NetworkBehavior behavior = NetworkBehavior.create();

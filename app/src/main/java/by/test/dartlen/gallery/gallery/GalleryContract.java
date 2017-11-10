@@ -21,7 +21,6 @@ public interface GalleryContract {
     interface Presenter extends BasePresenter {
         void loadNextPage(int currentPage, CallbackImages callbackX);
         void loadFirstPage();
-        void postImage();
     }
 
     interface View extends BaseView<GalleryContract.Presenter> {

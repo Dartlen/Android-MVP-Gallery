@@ -14,15 +14,15 @@ public class ImageData {
     private String base64Image;
     @SerializedName("date")
     @Expose
-    private Integer date;
+    private Long date;
     @SerializedName("lat")
     @Expose
-    private Integer lat;
+    private Double lat;
     @SerializedName("lng")
     @Expose
-    private Integer lng;
+    private Double lng;
 
-    public ImageData(String image,Integer date, Integer lat, Integer lng){
+    public ImageData(String image,Long date, Double lat, Double lng){
         this.base64Image=image;
         this.date=date;
         this.lat=lat;
@@ -37,27 +37,27 @@ public class ImageData {
         this.base64Image = base64Image;
     }
 
-    public Integer getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(Integer date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
-    public Integer getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLat(Integer lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public Integer getLng() {
+    public Double getLng() {
         return lng;
     }
 
-    public void setLng(Integer lng) {
+    public void setLng(Double lng) {
         this.lng = lng;
     }
 

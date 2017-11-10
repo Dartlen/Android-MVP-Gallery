@@ -97,7 +97,9 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
 
     @Override
     public void postImage(final ImagePostCallback callback, String token, ImageData data) {
-        retrofit2.Call<ResponseDataImagePost> call = ApiFactory.get().postImage(token, data);
+        //retrofit2.Call<ResponseDataImagePost> call = ApiFactory.get().postImage(token, data);
+        final retrofit2.Call<ResponseDataImagePost> call = new UserServiceMockAdapter()
+                .swapretrofit(ApiFactory.buildRetrofit()).postImage(token, data);
 
         call.enqueue(new Callback<ResponseDataImagePost>() {
             @Override

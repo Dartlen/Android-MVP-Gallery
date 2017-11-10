@@ -43,6 +43,7 @@ public class GalleryLocalDataSource implements GalleryDataSource{
         mUsersDao  = daoSession.getUsersDao();
         mapper     = new Mapper(context);
     }
+
     public static GalleryLocalDataSource getInstance(@NonNull Context context) {
         if (INSTANCE == null) {
             INSTANCE = new GalleryLocalDataSource(context);
@@ -76,17 +77,6 @@ public class GalleryLocalDataSource implements GalleryDataSource{
     public void setImages(List<DataImage> data, String token) {
         for(Images obj: mapper.toImagesFromDataImages(data))
             mImagesDao.insertOrReplace(obj);
-        //mapper
-        /*String login = prefs.getString("login","");
-        List<Users> userId = mUsersDao.queryBuilder()
-                .where(UsersDao.Properties.Login.eq(login))
-                .orderAsc(UsersDao.Properties.Id)
-                .list();
-
-        for (DataImage obj: data)
-            mImagesDao.insertOrReplace(
-                    new Images(null, obj.getUrl(), obj.getDate(), obj.getLat(), obj.getLng(),
-                            userId.get(0).getId()));*/
     }
 
     @Override

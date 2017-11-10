@@ -7,7 +7,7 @@
             android:title="Photo" />
         <item
             android:id="@+id/nav_map"
-
+            android:icon="@mipmap/ic_place_black_24dp"
             android:title="Map" />
 
 </menu>

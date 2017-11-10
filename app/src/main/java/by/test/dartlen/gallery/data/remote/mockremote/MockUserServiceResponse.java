@@ -1,5 +1,7 @@
 package by.test.dartlen.gallery.data.remote.mockremote;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -185,7 +187,8 @@ public class MockUserServiceResponse implements UserService{
 
     @Override
     public Call<ResponseDataImagePost> postImage(String token, ImageData data) {
-        return null;
+
+        return delegate.returning(Calls.response(new ResponseDataImagePost())).postImage(token, data);
     }
 
 }

@@ -83,7 +83,6 @@ public class GalleryRepository implements GalleryDataSource{
 
         getRemoteImages(callback, page, token);
 
-
         /*mGalleryLocalDataSource.getImages(new LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
@@ -121,6 +120,7 @@ public class GalleryRepository implements GalleryDataSource{
 
     @Override
     public void postImage(final ImagePostCallback callback, String token, ImageData data) {
+
         mGalleryRemoteDataSource.postImage(new ImagePostCallback() {
             @Override
             public void onDataLoaded(ResponseDataImagePost dataResponse) {
@@ -132,6 +132,7 @@ public class GalleryRepository implements GalleryDataSource{
                 callback.onError(error);
             }
         }, token, data);
+
     }
 
     @Override
