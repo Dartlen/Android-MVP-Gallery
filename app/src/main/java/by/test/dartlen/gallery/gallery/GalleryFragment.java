@@ -1,5 +1,7 @@
 package by.test.dartlen.gallery.gallery;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -97,6 +99,8 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                        ((MainPageActivity) getActivity()).openPicture(adapter.getItem(position));
+
                     }
                 });
 
@@ -109,7 +113,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                     }
                 });
 
-        adapter = new ImageAdapter(getContext());
+        adapter = new ImageAdapter(getContext() );
 
         linearLayoutManager = new LinearLayoutManager(getContext());
 
@@ -139,7 +143,6 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                                     isLastPage=true;
                                 adapter.addAll(tmpimages);
                                 progressBarImages.setVisibility(View.INVISIBLE);
-
                             }
                         });
 

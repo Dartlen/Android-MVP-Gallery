@@ -61,8 +61,6 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-        //Images result = ImagesList.get(position);
-
         switch (getItemViewType(position)) {
             case ITEM:
                 final ImageHolder image = (ImageHolder) holder;
@@ -70,6 +68,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 image.mTextView.setText(formatter.format(animal.getDate()));
                 image.bind(animal);
+
                 break;
 
             case LOADING:

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import by.test.dartlen.gallery.R;
+import by.test.dartlen.gallery.data.local.greendao.Images;
 
 /***
  * Created by Dartlen on 01.11.2017.
@@ -20,6 +21,7 @@ public class ItemClickSupport {
                 // ask the RecyclerView for the viewHolder of this view.
                 // then use it to get the position for the adapter
                 RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(v);
+
                 mOnItemClickListener.onItemClicked(mRecyclerView, holder.getAdapterPosition(), v);
             }
         }

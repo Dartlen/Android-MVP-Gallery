@@ -37,6 +37,8 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
         imageView.requestLayout();
 
+
+
         return new ImageHolder(view);
     }
 
@@ -49,6 +51,7 @@ public class ImageHolder extends RecyclerView.ViewHolder {
     public void bind(@NonNull Images images) {
         Image.loadImage(mImageView, images.getUrl());
     }
+
 
 }
 

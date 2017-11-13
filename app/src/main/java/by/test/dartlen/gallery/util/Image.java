@@ -1,5 +1,6 @@
 package by.test.dartlen.gallery.util;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
@@ -7,6 +8,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import by.test.dartlen.gallery.BuildConfig;
 import by.test.dartlen.gallery.R;
@@ -21,6 +23,7 @@ import by.test.dartlen.gallery.gallery.MainPageActivity;
 public final class Image {
 
     private Image() {
+
     }
 
     public static void loadImage(@NonNull ImageView imageView, @NonNull Images images) {
@@ -30,6 +33,7 @@ public final class Image {
     public static void loadImage(@NonNull final ImageView imageView, @NonNull final String url) {
         Picasso.with(imageView.getContext())
                 .load(url)
+
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .into(imageView, new Callback() {
                     @Override
@@ -58,10 +62,5 @@ public final class Image {
                 });
     }
 
-    /*public static void fetch(@NonNull String url) {
-        Picasso.with(this)
-                .load(url)
-                .fetch();
-    }*/
 }
 

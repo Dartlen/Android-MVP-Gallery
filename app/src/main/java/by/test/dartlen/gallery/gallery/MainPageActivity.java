@@ -56,8 +56,12 @@ import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.camera.CameraFragment;
 import by.test.dartlen.gallery.camera.CameraPresenter;
 import by.test.dartlen.gallery.data.GalleryRepository;
+import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.map.MapFragment;
+import by.test.dartlen.gallery.map.MapPresenter;
+import by.test.dartlen.gallery.picture.PictureFragment;
+import by.test.dartlen.gallery.picture.PicturePresenter;
 import by.test.dartlen.gallery.util.ActivityUtils;
 import by.test.dartlen.gallery.util.Injection;
 
@@ -73,18 +77,20 @@ public class MainPageActivity extends AppCompatActivity
     private GalleryFragment mGalleryFragment;
     private MapFragment mMapFragment;
     private CameraFragment mCameraFragment;
+    private PictureFragment mPictureFragment;
 
     private static MainPageActivity sInstance;
 
     private GalleryPresenter mGalleryPresenter;
     private CameraPresenter mCameraPresenter;
+    private PicturePresenter mPicturePresenter;
+    private MapPresenter mMapPresenter;
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
 
     private static final int  IMAGE=2000;
-    //private static final String TAG = "CamTestActivity";
     private String imagestring;
-    //public CameraImage resultCaptureImage;
+
 
     private final static int PLAY_SERVICES_REQUEST = 1000;
     private final static int REQUEST_CHECK_SETTINGS = 2000;
@@ -98,6 +104,12 @@ public class MainPageActivity extends AppCompatActivity
 
     boolean isPermissionGranted=true;
 
+    private Toolbar mToolbar;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private FloatingActionButton mFab;
+
+    private boolean mToolBarNavigationListenerIsRegistered = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +120,7 @@ public class MainPageActivity extends AppCompatActivity
 
         mFragmentManager = this.getSupportFragmentManager();
 
-        mMapFragment = new MapFragment();
+
 
         //TODO: вынести в отдельный класс инициализацию пикассо
         Picasso picasso = new Picasso.Builder(this)
@@ -118,8 +130,8 @@ public class MainPageActivity extends AppCompatActivity
         Picasso.setSingletonInstance(picasso);
 
         mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
-        if(mGalleryFragment ==null){
-            mGalleryFragment  = GalleryFragment.newInstance();
+        if (mGalleryFragment == null) {
+            mGalleryFragment = GalleryFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mGalleryFragment, R.id.fr);
         }
 
@@ -127,22 +139,33 @@ public class MainPageActivity extends AppCompatActivity
         mGalleryPresenter = new GalleryPresenter(mGalleryRepository, mGalleryFragment);
 
         mCameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
-        if(mCameraFragment ==null){
+        if (mCameraFragment == null) {
             mCameraFragment = CameraFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mCameraFragment, R.id.fr);
         }
         mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //mPictureFragment = (PictureFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
+        //if(mPictureFragment == null){
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mPictureFragment, R.id.fr);
+        //}
+
+        mMapFragment  = MapFragment.newInstance();
+        mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+
+
+
+
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                Intent intent=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File file=getOutputMediaFile(IMAGE);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File file = getOutputMediaFile(IMAGE);
 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, file);
 
@@ -162,33 +185,51 @@ public class MainPageActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener( mDrawerToggle);
+        mDrawerToggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    private void enableViews(boolean enable) {
+        if(mFab.getVisibility()==View.INVISIBLE){
+            mFab.setVisibility(View.VISIBLE);
+        }
+        if (enable) {
+            mDrawerToggle.setDrawerIndicatorEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (!mToolBarNavigationListenerIsRegistered) {
+                mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        onBackPressed();
+                    }
+                });
+
+                mToolBarNavigationListenerIsRegistered = true;
+            }
+
+        } else {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            mDrawerToggle.setDrawerIndicatorEnabled(true);
+            mDrawerToggle.setToolbarNavigationClickListener(null);
+            mToolBarNavigationListenerIsRegistered = false;
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        enableViews(false);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -198,14 +239,19 @@ public class MainPageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            enableViews(false);
+
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fr, mGalleryFragment)
                     .addToBackStack("GalleryFragment")
                     .commit();
+
         } else if (id == R.id.nav_map) {
+            enableViews(true);
             getSupportFragmentManager().beginTransaction().replace(R.id.fr, mMapFragment)
                     .addToBackStack("map")
                     .commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -283,7 +329,9 @@ public class MainPageActivity extends AppCompatActivity
                                                mLastLocation.getTime(),
                                                mLastLocation.getLatitude(),
                                                mLastLocation.getLongitude());
+
         mCameraFragment.imageFromSave(imageForPost);
+
 
         File destination = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
         FileOutputStream fo;
@@ -371,6 +419,16 @@ public class MainPageActivity extends AppCompatActivity
             }
         });
 
+    }
+
+    public void openPicture(Images imagedata){
+        mPictureFragment = PictureFragment.newInstance();
+        mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, imagedata);
+        enableViews(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fr, mPictureFragment)
+                .addToBackStack("picture")
+                .commit();
     }
 
     private boolean checkPlayServices() {

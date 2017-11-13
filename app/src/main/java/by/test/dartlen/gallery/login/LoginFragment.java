@@ -61,7 +61,6 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     @Override
     public void onResume() {
         super.onResume();
-        //mPresenter.start();
     }
 
     @Override
@@ -102,9 +101,9 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     @Override
     public void showDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder//.setTitle("Incorrect username or password. ")
+        builder
                 .setMessage("Incorrect username or password. ")
-                //.setIcon(R.drawable.ic_android_cat)
+
                 .setCancelable(false)
                 .setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {

@@ -16,8 +16,10 @@ import by.test.dartlen.gallery.data.local.greendao.Users;
 import by.test.dartlen.gallery.data.local.greendao.UsersDao;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
+import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.user.Data;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
+
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
@@ -64,7 +66,13 @@ public class GalleryLocalDataSource implements GalleryDataSource{
 
     @Override
     public void getImages(LoadImageCallback callback, int page, String token) {
-
+        List<Images> imagesData = mImagesDao.queryBuilder()
+                .orderAsc(ImagesDao.Properties.Id)
+                .list();
+        ResponseDataImage tmpData = new ResponseDataImage();
+        tmpData.setData(new Mapper(mContext).toDataImagefromImages(imagesData));
+        tmpData.setStatus(200);
+        callback.onDataLoaded(tmpData);
 
     }
 
