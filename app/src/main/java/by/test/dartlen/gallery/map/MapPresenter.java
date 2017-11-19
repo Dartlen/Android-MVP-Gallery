@@ -41,13 +41,12 @@ public class MapPresenter implements MapContract.Presenter{
         mGalleryRepository.getLocalImages(new GalleryDataSource.LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
-                //List<Images> tmpImagesList = mMapper.toImagesFromDataImages(dataResponse.getData());
                 mMapView.showPoints(dataResponse.getData());
             }
 
             @Override
             public void onError(String error) {
-                Log.d("dsad",error);
+
             }
         },1, mGalleryRepository.getUser().getToken());
     }

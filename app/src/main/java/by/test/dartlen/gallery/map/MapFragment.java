@@ -57,7 +57,6 @@ public class MapFragment extends Fragment implements MapContract.View {
             @Override
             public void onMapReady(GoogleMap mMap) {
 
-
                 googleMap = mMap;
                 DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 

@@ -4,11 +4,14 @@ import android.support.annotation.NonNull;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.local.greendao.Users;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
@@ -17,6 +20,7 @@ import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImagePost;
 import by.test.dartlen.gallery.data.remote.retrofit.user.Data;
 import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
+import by.test.dartlen.gallery.util.Image;
 
 /***
  * Created by Dartlen on 26.10.2017.
@@ -26,15 +30,20 @@ public class GalleryRepository implements GalleryDataSource{
 
     private static GalleryRepository INSTANCE = null;
 
+    private static Integer SIZE_PAGE=5;
+
     private final GalleryDataSource mGalleryRemoteDataSource;
 
     private final GalleryDataSource mGalleryLocalDataSource;
 
     private boolean isRemoteLoaded = false;
 
-    private Map<Integer, List<DataImage>> mCachedImages = null;
+    private List<Images> mCachedImages = new ArrayList<Images>();
 
-    private boolean mCacheIsDirty = true;
+    private Integer pageremotecount = 1;
+
+    boolean mCachIsDirty = false;
+
 
     private  GalleryRepository(@NonNull GalleryDataSource galleryRemoteDataSource,
                                @NonNull GalleryDataSource galleryLocalDataSource){
@@ -85,12 +94,81 @@ public class GalleryRepository implements GalleryDataSource{
     }
 
     @Override
-    public void getImages(final @NonNull LoadImageCallback callback, final @NotNull int page, final @NotNull String token) {
+    public void getImages(final @NonNull LoadImageCallback callback, final @NotNull int page,
+                          final @NotNull String token) {
 
-        if(mCachedImages.containsKey(page) ){
+        if (mCachedImages.size() == 0) {
             getLocalImages(new LoadImageCallback() {
                 @Override
                 public void onDataLoaded(ResponseDataImage dataResponse) {
+                    if (dataResponse.getData().size() != 0) {
+                        mCachedImages = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                        dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+                        getRemoteImages(new LoadImageCallback() {
+                            @Override
+                            public void onDataLoaded(ResponseDataImage dataResponse) {
+                                refreshLocalDataSource(dataResponse);
+
+
+                                List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                                appendnewitems(x);
+
+                                dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
+                                callback.onDataLoaded(dataResponse);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                callback.onError(error);
+                            }
+                        }, page, token);
+
+
+                        //callback.onDataLoaded(dataResponse);
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+
+                    getRemoteImages(new LoadImageCallback() {
+                        @Override
+                        public void onDataLoaded(ResponseDataImage dataResponse) {
+                            refreshLocalDataSource(dataResponse);
+
+                            List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                            appendnewitems(x);
+
+                            dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
+                            callback.onDataLoaded(dataResponse);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            callback.onError(error);
+                        }
+                    }, page, token);
+                    //callback.onError(error);
+                }
+            }, page, token);
+
+        }else{
+            getRemoteImages(new LoadImageCallback() {
+                @Override
+                public void onDataLoaded(ResponseDataImage dataResponse) {
+                    refreshLocalDataSource(dataResponse);
+
+
+                    List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                    appendnewitems(x);
+
+                    dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
                     callback.onDataLoaded(dataResponse);
                 }
 
@@ -99,11 +177,123 @@ public class GalleryRepository implements GalleryDataSource{
                     callback.onError(error);
                 }
             }, page, token);
+        }
+
+
+
+
+
+        /*getLocalImages(new LoadImageCallback() {
+            @Override
+            public void onDataLoaded(ResponseDataImage dataResponse) {
+                if (dataResponse.getData().size() != 0) {
+                    mCachedImages = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                    dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+                    callback.onDataLoaded(dataResponse);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        }, page, token);
+
+
+        getRemoteImages(new LoadImageCallback() {
+            @Override
+            public void onDataLoaded(ResponseDataImage dataResponse) {
+                refreshLocalDataSource(dataResponse);
+
+
+                List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                appendnewitems(x);
+
+                dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+                callback.onDataLoaded(dataResponse);
+
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        },  page, token);*/
+
+
+        /*if (mCachedImages.size() == 0) {
+            getLocalImages(new LoadImageCallback() {
+                @Override
+                public void onDataLoaded(ResponseDataImage dataResponse) {
+                    if (dataResponse.getData().size() != 0) {
+                        mCachedImages = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                        dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+                        getRemoteImages(new LoadImageCallback() {
+                            @Override
+                            public void onDataLoaded(ResponseDataImage dataResponse) {
+                                refreshLocalDataSource(dataResponse);
+
+
+                                List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                                appendnewitems(x);
+
+                                dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
+                                callback.onDataLoaded(dataResponse);
+                            }
+
+                            @Override
+                            public void onError(String error) {
+                                callback.onError(error);
+                            }
+                        }, page, token);
+
+
+                        //callback.onDataLoaded(dataResponse);
+                    }
+                }
+
+                @Override
+                public void onError(String error) {
+
+                    getRemoteImages(new LoadImageCallback() {
+                        @Override
+                        public void onDataLoaded(ResponseDataImage dataResponse) {
+                            refreshLocalDataSource(dataResponse);
+
+                            List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                            appendnewitems(x);
+
+                            dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
+                            callback.onDataLoaded(dataResponse);
+                        }
+
+                        @Override
+                        public void onError(String error) {
+                            callback.onError(error);
+                        }
+                    }, page, token);
+                    //callback.onError(error);
+                }
+            }, page, token);
+
         }else{
-            isRemoteLoaded=true;
             getRemoteImages(new LoadImageCallback() {
                 @Override
                 public void onDataLoaded(ResponseDataImage dataResponse) {
+                    refreshLocalDataSource(dataResponse);
+
+
+                    List<Images> x = mGalleryLocalDataSource.toImages(dataResponse.getData());
+                    appendnewitems(x);
+
+                    dataResponse.setData(mGalleryLocalDataSource.toDataImages(mCachedImages));
+
+
                     callback.onDataLoaded(dataResponse);
                 }
 
@@ -111,10 +301,23 @@ public class GalleryRepository implements GalleryDataSource{
                 public void onError(String error) {
                     callback.onError(error);
                 }
-            },page, token);
+            }, page, token);
+        }*/
+
+    }
+
+    public void appendnewitems(List<Images> images){
+        boolean flag = false;
+        for(Images im: images) {
+            for (Images x : mCachedImages) {
+                if (x.getUrl().equals(im.getUrl())) {
+                    flag=true;
+                }
+            }
+            if(!flag){
+                mCachedImages.add(im);
+            }
         }
-
-
     }
 
     private void getRemoteImages(final @NonNull LoadImageCallback callback, final @NotNull int page,
@@ -123,10 +326,6 @@ public class GalleryRepository implements GalleryDataSource{
         mGalleryRemoteDataSource.getImages(new LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
-                //refreshCache(dataResponse);
-                //refreshLocalDataSource(dataResponse);
-                //setImages(dataResponse.getData(), token);
-                mCachedImages.put(page, dataResponse.getData());
 
                 callback.onDataLoaded(dataResponse);
             }
@@ -216,4 +415,13 @@ public class GalleryRepository implements GalleryDataSource{
     }
 
 
+    @Override
+    public List<DataImage> toDataImages(List<Images> list) {
+        return null;
+    }
+
+    @Override
+    public List<Images> toImages(List<DataImage> list) {
+        return null;
+    }
 }

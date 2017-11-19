@@ -4,6 +4,7 @@ import java.io.File;
 
 import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
+import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 
 /**
@@ -18,5 +19,6 @@ public interface CameraContract {
     interface View extends BaseView<CameraContract.Presenter> {
 
         void setPresenter(Presenter presenter);
+        void showEror(Exception e, String image);
     }
 }

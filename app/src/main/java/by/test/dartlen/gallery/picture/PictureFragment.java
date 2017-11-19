@@ -111,4 +111,6 @@ public class PictureFragment extends Fragment implements PictureContract.View {
         textView.setText(formatter.format(imageData.getDate()));
         Image.loadImage(imagePicture, imageData);
     }
+
+
 }

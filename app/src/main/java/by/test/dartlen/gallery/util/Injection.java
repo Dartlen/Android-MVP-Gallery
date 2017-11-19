@@ -19,6 +19,4 @@ public class Injection {
 
         return GalleryRepository.getInstance(GalleryRemoteDataSource.getInstance(),GalleryLocalDataSource.getInstance(context));
     }
-
-
 }

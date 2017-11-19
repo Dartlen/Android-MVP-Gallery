@@ -1,6 +1,7 @@
 package by.test.dartlen.gallery.login;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +38,8 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     @BindView(R.id.button)
     Button mButton;
 
+    private static ProgressDialog mDialog;
+
     public LoginFragment() {
     }
 
@@ -64,21 +67,6 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     }
 
     @Override
-    public void showLogin() {
-
-    }
-
-    @Override
-    public void showLoginError() {
-
-    }
-
-    @Override
-    public void showRegister() {
-
-    }
-
-    @Override
     public void setPresenter(@NonNull LoginContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
@@ -103,7 +91,6 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder
                 .setMessage("Incorrect username or password. ")
-
                 .setCancelable(false)
                 .setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {
@@ -113,5 +100,17 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
                         });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void showProgress() {
+        mDialog = ProgressDialog.show(getContext(),
+                "ProgressDialog",
+                "Wait!");
+    }
+
+    @Override
+    public void hideProgress() {
+        mDialog.dismiss();
     }
 }

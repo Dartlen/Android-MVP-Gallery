@@ -18,14 +18,12 @@ public class ItemClickSupport {
         @Override
         public void onClick(View v) {
             if (mOnItemClickListener != null) {
-                // ask the RecyclerView for the viewHolder of this view.
-                // then use it to get the position for the adapter
                 RecyclerView.ViewHolder holder = mRecyclerView.getChildViewHolder(v);
-
                 mOnItemClickListener.onItemClicked(mRecyclerView, holder.getAdapterPosition(), v);
             }
         }
     };
+
     private View.OnLongClickListener mOnLongClickListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -36,11 +34,11 @@ public class ItemClickSupport {
             return false;
         }
     };
+
     private RecyclerView.OnChildAttachStateChangeListener mAttachListener
             = new RecyclerView.OnChildAttachStateChangeListener() {
         @Override
         public void onChildViewAttachedToWindow(View view) {
-            // every time a new child view is attached add click listeners to it
             if (mOnItemClickListener != null) {
                 view.setOnClickListener(mOnClickListener);
             }
@@ -57,16 +55,11 @@ public class ItemClickSupport {
 
     private ItemClickSupport(RecyclerView recyclerView) {
         mRecyclerView = recyclerView;
-        // the ID must be declared in XML, used to avoid
-        // replacing the ItemClickSupport without removing
-        // the old one from the RecyclerView
         mRecyclerView.setTag(R.id.item_click_support, this);
         mRecyclerView.addOnChildAttachStateChangeListener(mAttachListener);
     }
 
     public static ItemClickSupport addTo(RecyclerView view) {
-        // if there's already an ItemClickSupport attached
-        // to this RecyclerView do not replace it, use it
         ItemClickSupport support = (ItemClickSupport) view.getTag(R.id.item_click_support);
         if (support == null) {
             support = new ItemClickSupport(view);

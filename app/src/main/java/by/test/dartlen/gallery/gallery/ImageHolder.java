@@ -28,7 +28,6 @@ public class ImageHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.info_text)
     TextView mTextView;
 
-
     @NonNull
     public static ImageHolder create(@NonNull Context context) {
         View view = View.inflate(context, R.layout.item_image, null);
@@ -37,21 +36,16 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
         imageView.requestLayout();
 
-
-
         return new ImageHolder(view);
     }
 
     public ImageHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
-
     }
 
     public void bind(@NonNull Images images) {
         Image.loadImage(mImageView, images.getUrl());
     }
-
-
 }
 

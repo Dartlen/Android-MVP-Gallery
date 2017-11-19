@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.NotNull;
 
 import java.util.List;
 
+import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.local.greendao.Users;
 import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponse;
 import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
@@ -48,5 +49,7 @@ public interface GalleryDataSource {
     void setUser(Data user);
     Users getUser();
 
+    List<DataImage> toDataImages(List<Images> list);
+    List<Images> toImages(List<DataImage> list);
 }
 

@@ -32,7 +32,8 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFramgent = LoginFragment.newInstance();
         mRegisterFragment = RegisterFragment.newInstance();
 
-        mLoginPresenter = new LoginPresenter(Injection.provideGalleryRepository(getApplicationContext()), mLoginFramgent, mRegisterFragment);
+        mLoginPresenter = new LoginPresenter(Injection.provideGalleryRepository(getApplicationContext()),
+                                                mLoginFramgent, mRegisterFragment);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);

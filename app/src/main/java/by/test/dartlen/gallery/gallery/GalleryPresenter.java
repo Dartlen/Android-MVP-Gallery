@@ -1,18 +1,11 @@
 package by.test.dartlen.gallery.gallery;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import java.util.Date;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
-import by.test.dartlen.gallery.data.Mapper;
-import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
+import by.test.dartlen.gallery.data.local.greendao.App;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImagePost;
-import by.test.dartlen.gallery.login.LoginContract;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -34,45 +27,29 @@ public class GalleryPresenter implements GalleryContract.Presenter {
 
     @Override
     public void start() {
-        loadFirstPage();
+
     }
 
     @Override
-    public void loadFirstPage() {
+    public void loadFirstPage(int page) {
 
         String token = mGalleryRepository.getUser().getToken();
 
         mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
-                mGalleryView.showFirstPage(dataResponse.getData());
+                mGalleryView.addItemToAdapter(dataResponse);
             }
 
             @Override
             public void onError(String error) {
 
             }
-        },1, token);
+        }, page, token);
     }
-
 
     @Override
-    public void loadNextPage(int currentPage, final GalleryContract.CallbackImages callbackImages) {
-        String token = mGalleryRepository.getUser().getToken();
-
-        mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
-            @Override
-            public void onDataLoaded(ResponseDataImage dataResponse) {
-               callbackImages.load(dataResponse.getData());
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        },currentPage ,token);
+    public void onBackPressed() {
+        App.INSTANCE.getRouter().exit();
     }
-
-
-
 }

@@ -1,6 +1,7 @@
 package by.test.dartlen.gallery.login;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -39,6 +40,8 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
     @BindView(R.id.button)
     Button mButton;
 
+    private ProgressDialog mDialog;
+
     public static RegisterFragment newInstance(){
         return new RegisterFragment();
     }
@@ -64,7 +67,7 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
         return root;
     }
 
-    @Override
+    /*@Override
     public void showLogin() {
 
     }
@@ -77,7 +80,7 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
     @Override
     public void showRegister() {
 
-    }
+    }*/
 
     @Override
     public LoginData getLoginPassword() {
@@ -101,5 +104,17 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
     @Override
     public void showDialog() {
 
+    }
+
+    @Override
+    public void showProgress() {
+        mDialog.show(getContext(),
+                "ProgressDialog",
+                "Wait!");
+    }
+
+    @Override
+    public void hideProgress() {
+        mDialog.dismiss();
     }
 }

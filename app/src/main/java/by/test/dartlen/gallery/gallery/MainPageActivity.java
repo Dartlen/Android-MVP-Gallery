@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
@@ -52,10 +53,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
+
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.camera.CameraFragment;
 import by.test.dartlen.gallery.camera.CameraPresenter;
 import by.test.dartlen.gallery.data.GalleryRepository;
+import by.test.dartlen.gallery.data.local.greendao.App;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.map.MapFragment;
@@ -64,6 +68,8 @@ import by.test.dartlen.gallery.picture.PictureFragment;
 import by.test.dartlen.gallery.picture.PicturePresenter;
 import by.test.dartlen.gallery.util.ActivityUtils;
 import by.test.dartlen.gallery.util.Injection;
+import ru.terrakok.cicerone.Navigator;
+import ru.terrakok.cicerone.android.SupportFragmentNavigator;
 
 public class MainPageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks,
@@ -112,6 +118,7 @@ public class MainPageActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //GalleryApplication.INSTANCE.getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
@@ -119,15 +126,6 @@ public class MainPageActivity extends AppCompatActivity
         setLoginHeader();
 
         mFragmentManager = this.getSupportFragmentManager();
-
-
-
-        //TODO: вынести в отдельный класс инициализацию пикассо
-        Picasso picasso = new Picasso.Builder(this)
-                .downloader(new OkHttp3Downloader(this))
-                .build();
-
-        Picasso.setSingletonInstance(picasso);
 
         mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
         if (mGalleryFragment == null) {
@@ -145,19 +143,10 @@ public class MainPageActivity extends AppCompatActivity
         }
         mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment);
 
-        //mPictureFragment = (PictureFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
-        //if(mPictureFragment == null){
-
-        //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mPictureFragment, R.id.fr);
-        //}
-
         mMapFragment  = MapFragment.newInstance();
         mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-
-
-
 
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -222,15 +211,119 @@ public class MainPageActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        App.INSTANCE.getNavigatorHolder().setNavigator(navigator);
+        checkPlayServices();
+    }
+
+    @Override
+    protected void onPause() {
+        App.INSTANCE.getNavigatorHolder().removeNavigator();
+        super.onPause();
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         enableViews(false);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            mGalleryPresenter.onBackPressed();
         }
+
+
     }
+
+    private Navigator navigator = new SupportFragmentNavigator(getSupportFragmentManager(),
+            R.id.fr) {
+
+        @Override
+        protected Fragment createFragment(String screenKey, Object data) {
+            switch(screenKey) {
+                case "map":
+                    enableViews(true);
+                    return mMapFragment;
+                case "gallery":
+                    enableViews(true);
+                    return mGalleryFragment;
+                case "picture":
+                    mPictureFragment = PictureFragment.newInstance();
+                    mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, (Images)data);
+                    enableViews(true);
+                    return mPictureFragment;
+                default:
+                    throw new RuntimeException("Unknown screen key!");
+            }
+        }
+
+        @Override
+        protected void showSystemMessage(String message) {
+            Toast.makeText(MainPageActivity.this, message, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void exit() {
+            finish();
+        }
+    };
+
+    /*private Navigator navigator = new Navigator() {
+        @Override
+        public void applyCommand(Command command) {
+            if (command instanceof Forward) {
+                forward((Forward) command);
+            } else if (command instanceof Replace) {
+                replace((Replace) command);
+            } else if (command instanceof Back) {
+                back();
+            } else if (command instanceof SystemMessage) {
+                Toast.makeText(StartActivity.this, ((SystemMessage) command).getMessage(), Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("Cicerone", "Illegal command for this screen: " + command.getClass().getSimpleName());
+            }
+        }
+
+        private void forward(Forward command) {
+            switch (command.getScreenKey()) {
+                case Screens.START_ACTIVITY_SCREEN:
+                    startActivity(new Intent(StartActivity.this, StartActivity.class));
+                    break;
+                case Screens.MAIN_ACTIVITY_SCREEN:
+                    startActivity(new Intent(StartActivity.this, MainActivity.class));
+                    break;
+                case Screens.BOTTOM_NAVIGATION_ACTIVITY_SCREEN:
+                    startActivity(new Intent(StartActivity.this, BottomNavigationActivity.class));
+                    break;
+                case Screens.PROFILE_SCREEN:
+                    startActivity(new Intent(StartActivity.this, ProfileActivity.class));
+                    break;
+                default:
+                    Log.e("Cicerone", "Unknown screen: " + command.getScreenKey());
+                    break;
+            }
+        }
+
+        private void replace(Replace command) {
+            switch (command.getScreenKey()) {
+                case Screens.START_ACTIVITY_SCREEN:
+                case Screens.MAIN_ACTIVITY_SCREEN:
+                case Screens.BOTTOM_NAVIGATION_ACTIVITY_SCREEN:
+                case Screens.PROFILE_SCREEN:
+                    forward(new Forward(command.getScreenKey(), command.getTransitionData()));
+                    finish();
+                    break;
+                default:
+                    Log.e("Cicerone", "Unknown screen: " + command.getScreenKey());
+                    break;
+            }
+        }
+
+        private void back() {
+            finish();
+        }
+    };*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -239,19 +332,11 @@ public class MainPageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gallery) {
+            App.INSTANCE.getRouter().navigateTo("gallery");
             enableViews(false);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fr, mGalleryFragment)
-                    .addToBackStack("GalleryFragment")
-                    .commit();
-
         } else if (id == R.id.nav_map) {
+            App.INSTANCE.getRouter().navigateTo("map");
             enableViews(true);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fr, mMapFragment)
-                    .addToBackStack("map")
-                    .commit();
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -326,12 +411,10 @@ public class MainPageActivity extends AppCompatActivity
         imagestring = bitmapToBase64(bitmap);
 
         ImageData imageForPost = new ImageData(imagestring,
-                                               mLastLocation.getTime(),
-                                               mLastLocation.getLatitude(),
-                                               mLastLocation.getLongitude());
-
+                mLastLocation.getTime(),
+                mLastLocation.getLatitude(),
+                mLastLocation.getLongitude());
         mCameraFragment.imageFromSave(imageForPost);
-
 
         File destination = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
         FileOutputStream fo;
@@ -421,16 +504,6 @@ public class MainPageActivity extends AppCompatActivity
 
     }
 
-    public void openPicture(Images imagedata){
-        mPictureFragment = PictureFragment.newInstance();
-        mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, imagedata);
-        enableViews(true);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fr, mPictureFragment)
-                .addToBackStack("picture")
-                .commit();
-    }
-
     private boolean checkPlayServices() {
 
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
@@ -450,13 +523,6 @@ public class MainPageActivity extends AppCompatActivity
             return false;
         }
         return true;
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        checkPlayServices();
     }
 
     @Override

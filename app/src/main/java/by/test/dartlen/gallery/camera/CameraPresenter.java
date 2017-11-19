@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
+import by.test.dartlen.gallery.data.local.greendao.App;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImagePost;
 
@@ -52,6 +53,7 @@ public class CameraPresenter implements CameraContract.Presenter {
             }
         },mGalleryRepository.getUser().getToken(),image);
     }
+
 
 
 }

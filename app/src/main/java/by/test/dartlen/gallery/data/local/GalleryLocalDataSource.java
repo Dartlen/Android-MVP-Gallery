@@ -71,6 +71,8 @@ public class GalleryLocalDataSource implements GalleryDataSource{
                 .list();
         ResponseDataImage tmpData = new ResponseDataImage();
         tmpData.setData(new Mapper(mContext).toDataImagefromImages(imagesData));
+        if(tmpData.getData().size()==0)
+            callback.onError("Null size");
         tmpData.setStatus(200);
         callback.onDataLoaded(tmpData);
 
@@ -122,5 +124,15 @@ public class GalleryLocalDataSource implements GalleryDataSource{
         {
             return null;
         }
+    }
+
+    @Override
+    public List<DataImage> toDataImages(List<Images> list) {
+        return new Mapper(mContext).toDataImagefromImages(list);
+    }
+
+    @Override
+    public List<Images> toImages(List<DataImage> list) {
+        return new Mapper(mContext).toImagesFromDataImages(list);
     }
 }

@@ -7,6 +7,7 @@ import org.greenrobot.greendao.annotation.NotNull;
 import java.util.List;
 
 import by.test.dartlen.gallery.data.GalleryDataSource;
+import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.local.greendao.Users;
 import by.test.dartlen.gallery.data.remote.mockremote.UserServiceMockAdapter;
 import by.test.dartlen.gallery.data.remote.retrofit.ApiFactory;
@@ -128,6 +129,16 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
 
     @Override
     public Users getUser() {
+        return null;
+    }
+
+    @Override
+    public List<DataImage> toDataImages(List<Images> list) {
+        return null;
+    }
+
+    @Override
+    public List<Images> toImages(List<DataImage> list) {
         return null;
     }
 }

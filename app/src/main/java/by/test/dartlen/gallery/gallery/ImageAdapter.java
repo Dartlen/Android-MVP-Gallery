@@ -87,7 +87,6 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return (position == ImagesList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
-
     public void add(Images r) {
         ImagesList.add(r);
         notifyItemInserted(ImagesList.size() - 1);

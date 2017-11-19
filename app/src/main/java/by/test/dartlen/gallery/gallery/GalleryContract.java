@@ -10,6 +10,7 @@ import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
+import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 import by.test.dartlen.gallery.login.LoginContract;
 
 /**
@@ -19,16 +20,17 @@ import by.test.dartlen.gallery.login.LoginContract;
 public interface GalleryContract {
 
     interface Presenter extends BasePresenter {
-        void loadNextPage(int currentPage, CallbackImages callbackX);
-        void loadFirstPage();
+        void loadFirstPage(int page);
+        void onBackPressed();
     }
 
     interface View extends BaseView<GalleryContract.Presenter> {
-        void showFirstPage(List<DataImage> results);
+
+        void addItemToAdapter(ResponseDataImage dataResponse);
     }
 
-    interface CallbackImages{
+    /*interface CallbackImages{
         void load(List<DataImage> results);
-    }
+    }*/
 
 }

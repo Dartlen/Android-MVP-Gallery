@@ -24,24 +24,16 @@ public class Mapper {
     private UsersDao mUsersDao;
     private Users user;
     private SharedPreferences prefs;
+    private Context mContext;
 
     public Mapper(Context context){
-        DaoSession daoSession = ((App)context.getApplicationContext()).getDaoSession();
-        mUsersDao  = daoSession.getUsersDao();
-        prefs = context.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
-        String login = prefs.getString("login","");
-        List<Users> users = mUsersDao.queryBuilder()
-                .where(UsersDao.Properties.Login.eq(login))
-                .orderAsc(UsersDao.Properties.Id)
-                .list();
-        if(users.size()==0){
-
-        }else {
-            user=users.get(0);
-        }
+        mContext = context;
+        initUser();
     }
 
     public List<Images> toImagesFromDataImages(List<DataImage> dataImages){
+        if(user==null)
+            initUser();
         if(dataImages==null || dataImages.size()==0){
             return new ArrayList<Images>(0);
         }else{
@@ -56,6 +48,8 @@ public class Mapper {
 
         //TODO: проверить работоспособность
     public List<DataImage> toDataImagefromImages(List<Images> images){
+        if(user==null)
+            initUser();
         if(images == null || images.size()== 0 ){
             return new ArrayList<DataImage>(0);
         }else{
@@ -72,4 +66,20 @@ public class Mapper {
             return result;
         }
         }
+
+    private void initUser(){
+        DaoSession daoSession = ((App)mContext.getApplicationContext()).getDaoSession();
+        mUsersDao  = daoSession.getUsersDao();
+        prefs = mContext.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
+        String login = prefs.getString("login","");
+        List<Users> users = mUsersDao.queryBuilder()
+                .where(UsersDao.Properties.Login.eq(login))
+                .orderAsc(UsersDao.Properties.Id)
+                .list();
+        if(users.size()==0){
+
+        }else {
+            user=users.get(0);
+        }
+    }
 }

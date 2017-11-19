@@ -37,16 +37,17 @@ public class LoginPresenter implements LoginContract.Presenter{
     public void register() {
 
         LoginData ld = mRegisterView.getLoginPassword();
-
+        mRegisterView.showProgress();
         mGalleryRepository.signup(new GalleryDataSource.LoadLoginCallback() {
             @Override
             public void onLoggined(DataResponse login) {
+                mRegisterView.hideProgress();
                 mRegisterView.showMain();
             }
 
             @Override
             public void onDataNotAvailable(String error) {
-
+                mRegisterView.hideProgress();
             }
         },ld);
     }
@@ -54,21 +55,21 @@ public class LoginPresenter implements LoginContract.Presenter{
     @Override
     public void login() {
         LoginData ld = mLoginView.getLoginPassword();
+        mLoginView.showProgress();
         mGalleryRepository.signin(new GalleryDataSource.LoadLoginCallback() {
             @Override
             public void onLoggined(DataResponse login) {
-
+                mLoginView.hideProgress();
                 mLoginView.showMain();
             }
 
             @Override
             public void onDataNotAvailable(String error) {
+                mLoginView.hideProgress();
                 mLoginView.showDialog();
             }
         },ld);
     }
-
-
 }
 
 

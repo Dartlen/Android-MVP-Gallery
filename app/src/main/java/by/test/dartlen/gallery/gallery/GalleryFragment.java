@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,15 +22,22 @@ import android.widget.GridLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.Mapper;
+import by.test.dartlen.gallery.data.local.greendao.App;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
+import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
+import by.test.dartlen.gallery.util.Image;
 import by.test.dartlen.gallery.util.PaginationScrollListener;
+import retrofit2.Call;
+import retrofit2.Response;
+import ru.terrakok.cicerone.commands.Replace;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -43,12 +51,16 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
     private Mapper mapper;
 
-    private static final int PAGE_START = 1;
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
+    public int NUM_ITEMS_PAGE = 5;
 
-    private ImageAdapter adapter;
-    private LinearLayoutManager linearLayoutManager;
+    private ImageAdapter musicRecyclerAdapter;
+
+    private List<Images> listList = new ArrayList<>(0);
+
+    private int paginationCounter = 0;
+
+    private boolean isLoading = true;
+    private int pagecounter = 1;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -77,15 +89,13 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @Override
     public void onResume() {
         super.onResume();
-        if(!isLastPage)
-            mPresenter.start();
-        isLastPage=false;
-        isLoading=false;
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        pagecounter=1;
+        paginationCounter = 0;
     }
 
     @Nullable
@@ -99,8 +109,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        ((MainPageActivity) getActivity()).openPicture(adapter.getItem(position));
-
+                        App.INSTANCE.getRouter().navigateTo("picture", musicRecyclerAdapter.getItem(position));
                     }
                 });
 
@@ -113,59 +122,63 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                     }
                 });
 
-        adapter = new ImageAdapter(getContext() );
+        recycleViewSetup(recyclerView);
 
-        linearLayoutManager = new LinearLayoutManager(getContext());
+        musicRecyclerAdapter = new ImageAdapter(getContext());
 
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        GridLayoutManager mGridLayout = new GridLayoutManager(getContext(), 3);
-        recyclerView.setLayoutManager(mGridLayout);
+        recyclerView.setAdapter(musicRecyclerAdapter);
 
-        recyclerView.setAdapter(adapter);
-
-        recyclerView.addOnScrollListener(new PaginationScrollListener(mGridLayout) {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            protected void loadMoreItems(final int page) {
-                isLoading = true;
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
 
-                        progressBarImages.setVisibility(View.VISIBLE);
+                int totalItemCount = layoutManager.getItemCount();
 
-                        mPresenter.loadNextPage(page, new GalleryContract.CallbackImages() {
-                            @Override
-                            public void load(List<DataImage> result) {
-                                isLoading = false;
-                                List<Images> tmpimages = mapper.toImagesFromDataImages(result);
-                                if(tmpimages.size()==0)
-                                    isLastPage=true;
-                                adapter.addAll(tmpimages);
-                                progressBarImages.setVisibility(View.INVISIBLE);
-                            }
-                        });
+                int lastVisible = layoutManager.findLastVisibleItemPosition();
 
-                    }
-                }, 1000);
-            }
+                boolean endHasBeenReached = lastVisible + 5 >= totalItemCount;
+                int childcount = layoutManager.getChildCount();
+                int firstVisible = layoutManager.findFirstVisibleItemPosition();
 
-            @Override
-            public boolean isLastPage() {
-                return isLastPage;
-            }
-
-            @Override
-            public boolean isLoading() {
-                return isLoading;
+                if (totalItemCount > 0 && endHasBeenReached) {
+                        if ((childcount + firstVisible) >= totalItemCount
+                                && firstVisible >= 0 ) {
+                            if(totalItemCount==lastVisible+1){
+                                pagecounter++;
+                                mPresenter.loadFirstPage(pagecounter);}
+                        }
+                }
             }
         });
+        mPresenter.loadFirstPage(pagecounter);
+
         return root;
     }
 
-    @Override
-    public void showFirstPage(List<DataImage> result) {
-        adapter.addAll(mapper.toImagesFromDataImages(result));
-        progressBar.setVisibility(View.INVISIBLE);
+    public void recycleViewSetup(RecyclerView recyclerView) {
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+    }
+
+    public void addItemToAdapter(ResponseDataImage dataResponse) {
+        listList = mapper.toImagesFromDataImages(dataResponse.getData());
+        paginationCounter += NUM_ITEMS_PAGE;
+        for (int i = paginationCounter - NUM_ITEMS_PAGE; i < paginationCounter; i++) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (i < listList.size() && listList.get(i) != null)
+
+                musicRecyclerAdapter.add(listList.get(i));
+        }
+        isLoading=false;
     }
 }
+
+
+
+
+

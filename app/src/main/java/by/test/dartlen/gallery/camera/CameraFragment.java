@@ -51,4 +51,8 @@ public class CameraFragment extends Fragment implements CameraContract.View, Mai
         return root;
     }
 
+    @Override
+    public void showEror(Exception e, String image) {
+
+    }
 }
