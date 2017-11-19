@@ -1,10 +1,7 @@
 package by.test.dartlen.gallery.picture;
 
-import android.os.Bundle;
-
 import org.greenrobot.greendao.annotation.NotNull;
 
-import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 

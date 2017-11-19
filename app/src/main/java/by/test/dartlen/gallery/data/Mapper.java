@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import by.test.dartlen.gallery.data.local.greendao.App;
+import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.local.greendao.DaoSession;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.local.greendao.Users;

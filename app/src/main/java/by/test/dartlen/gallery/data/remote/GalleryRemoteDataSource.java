@@ -4,18 +4,11 @@ import android.support.annotation.NonNull;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
-import java.util.List;
-
-import by.test.dartlen.gallery.data.GalleryDataSource;
-import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.data.local.greendao.Users;
 import by.test.dartlen.gallery.data.remote.mockremote.UserServiceMockAdapter;
 import by.test.dartlen.gallery.data.remote.retrofit.ApiFactory;
-import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImagePost;
-import by.test.dartlen.gallery.data.remote.retrofit.user.Data;
 import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponse;
@@ -28,7 +21,7 @@ import retrofit2.Response;
  * Created by Dartlen on 27.10.2017.
  */
 
-public class GalleryRemoteDataSource implements GalleryDataSource {
+public class GalleryRemoteDataSource {
 
     private static GalleryRemoteDataSource INSTANCE;
 
@@ -41,11 +34,9 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
 
     private GalleryRemoteDataSource(){}
 
-    @Override
     public void signin(final @NonNull LoadLoginCallback callback, final @NonNull LoginData loginData) {
         retrofit2.Call<DataResponse> call = new UserServiceMockAdapter()
                 .swapretrofit(ApiFactory.buildRetrofit()).Signin(loginData);
-
         call.enqueue(new RetrofitResponse<DataResponse>(new RetrofitResponseCallback<DataResponse>() {
             @Override
             public void onDataLoaded(DataResponse dataResponse) {
@@ -59,10 +50,8 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
         }));
     }
 
-    @Override
     public void signup(final @NonNull LoadLoginCallback callback, final @NonNull LoginData loginData) {
         retrofit2.Call<DataResponse> call = ApiFactory.get().Signup(loginData);
-
         call.enqueue(new RetrofitResponse<DataResponse>(new RetrofitResponseCallback<DataResponse>() {
             @Override
             public void onDataLoaded(DataResponse dataResponse) {
@@ -76,7 +65,6 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
         }));
     }
 
-    @Override
     public void getImages(final @NotNull LoadImageCallback callback, final @NotNull int page,
                           final @NotNull String token) {
         final retrofit2.Call<ResponseDataImage> call = new UserServiceMockAdapter()
@@ -95,10 +83,7 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
 
     }
 
-
-    @Override
     public void postImage(final ImagePostCallback callback, String token, ImageData data) {
-        //retrofit2.Call<ResponseDataImagePost> call = ApiFactory.get().postImage(token, data);
         final retrofit2.Call<ResponseDataImagePost> call = new UserServiceMockAdapter()
                 .swapretrofit(ApiFactory.buildRetrofit()).postImage(token, data);
 
@@ -117,28 +102,20 @@ public class GalleryRemoteDataSource implements GalleryDataSource {
 
     }
 
-    @Override
-    public void setImages(List<DataImage> data, String token) {
-
+    public interface LoadLoginCallback{
+        void onLoggined(DataResponse login);
+        void onDataNotAvailable(String error);
     }
 
-    @Override
-    public void setUser(Data user) {
-
+    public interface LoadImageCallback{
+        void onDataLoaded(ResponseDataImage dataResponse);
+        void onError(String error);
     }
 
-    @Override
-    public Users getUser() {
-        return null;
+    public interface ImagePostCallback{
+        void onDataLoaded(ResponseDataImagePost dataResponse);
+        void onError(String error);
     }
 
-    @Override
-    public List<DataImage> toDataImages(List<Images> list) {
-        return null;
-    }
-
-    @Override
-    public List<Images> toImages(List<DataImage> list) {
-        return null;
-    }
 }
+

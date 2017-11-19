@@ -1,10 +1,9 @@
 package by.test.dartlen.gallery.login;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
-import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
+import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
 import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
@@ -15,7 +14,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoginPresenter implements LoginContract.Presenter{
 
-    private final GalleryDataSource mGalleryRepository;
+    private final GalleryRepository mGalleryRepository;
     private final LoginContract.View mLoginView;
     private final LoginContract.View mRegisterView;
 
@@ -38,7 +37,7 @@ public class LoginPresenter implements LoginContract.Presenter{
 
         LoginData ld = mRegisterView.getLoginPassword();
         mRegisterView.showProgress();
-        mGalleryRepository.signup(new GalleryDataSource.LoadLoginCallback() {
+        mGalleryRepository.signup(new GalleryRemoteDataSource.LoadLoginCallback() {
             @Override
             public void onLoggined(DataResponse login) {
                 mRegisterView.hideProgress();
@@ -56,7 +55,7 @@ public class LoginPresenter implements LoginContract.Presenter{
     public void login() {
         LoginData ld = mLoginView.getLoginPassword();
         mLoginView.showProgress();
-        mGalleryRepository.signin(new GalleryDataSource.LoadLoginCallback() {
+        mGalleryRepository.signin(new GalleryRemoteDataSource.LoadLoginCallback() {
             @Override
             public void onLoggined(DataResponse login) {
                 mLoginView.hideProgress();

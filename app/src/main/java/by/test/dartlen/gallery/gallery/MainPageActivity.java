@@ -42,8 +42,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.jakewharton.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,7 +57,7 @@ import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.camera.CameraFragment;
 import by.test.dartlen.gallery.camera.CameraPresenter;
 import by.test.dartlen.gallery.data.GalleryRepository;
-import by.test.dartlen.gallery.data.local.greendao.App;
+import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 import by.test.dartlen.gallery.map.MapFragment;

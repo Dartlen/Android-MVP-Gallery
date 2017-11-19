@@ -2,9 +2,9 @@ package by.test.dartlen.gallery.gallery;
 
 import android.support.annotation.NonNull;
 
-import by.test.dartlen.gallery.data.GalleryDataSource;
 import by.test.dartlen.gallery.data.GalleryRepository;
-import by.test.dartlen.gallery.data.local.greendao.App;
+import by.test.dartlen.gallery.App;
+import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class GalleryPresenter implements GalleryContract.Presenter {
 
-    private GalleryDataSource mGalleryRepository;
+    private GalleryRepository mGalleryRepository;
     private GalleryContract.View mGalleryView;
 
     public GalleryPresenter(@NonNull GalleryRepository galleryRepository, @NonNull GalleryContract.View galleryView){
@@ -35,7 +35,7 @@ public class GalleryPresenter implements GalleryContract.Presenter {
 
         String token = mGalleryRepository.getUser().getToken();
 
-        mGalleryRepository.getImages(new GalleryDataSource.LoadImageCallback() {
+        mGalleryRepository.getImages(new GalleryRemoteDataSource.LoadImageCallback() {
             @Override
             public void onDataLoaded(ResponseDataImage dataResponse) {
                 mGalleryView.addItemToAdapter(dataResponse);

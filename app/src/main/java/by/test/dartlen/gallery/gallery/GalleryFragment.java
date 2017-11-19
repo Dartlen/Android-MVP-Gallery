@@ -1,26 +1,17 @@
 package by.test.dartlen.gallery.gallery;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,15 +20,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.Mapper;
-import by.test.dartlen.gallery.data.local.greendao.App;
+import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
-import by.test.dartlen.gallery.util.Image;
-import by.test.dartlen.gallery.util.PaginationScrollListener;
-import retrofit2.Call;
-import retrofit2.Response;
-import ru.terrakok.cicerone.commands.Replace;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
