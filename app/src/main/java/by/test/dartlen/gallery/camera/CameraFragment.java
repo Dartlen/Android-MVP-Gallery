@@ -1,5 +1,7 @@
 package by.test.dartlen.gallery.camera;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -54,5 +56,22 @@ public class CameraFragment extends Fragment implements CameraContract.View, Mai
     @Override
     public void showEror(Exception e, String image) {
 
+    }
+
+    @Override
+    public void showMessage(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message);
+        builder.setCancelable(true);
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog messageDialog = builder.create();
+        messageDialog.show();
     }
 }

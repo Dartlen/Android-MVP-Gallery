@@ -36,13 +36,13 @@ public class CameraPresenter implements CameraContract.Presenter {
             @Override
             public void onDataLoaded(ResponseDataImagePost dataResponse) {
                 //TODO: сообщение что изображение згружено
-
+                mCameraView.showMessage("Изображение загружено");
             }
 
             @Override
             public void onError(String error) {
 
             }
-        },mGalleryRepository.getUser().getToken(),image);
+        },mGalleryRepository.getUser().getToken(), image);
     }
 }

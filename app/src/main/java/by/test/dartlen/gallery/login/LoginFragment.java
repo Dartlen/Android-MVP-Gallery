@@ -3,7 +3,6 @@ package by.test.dartlen.gallery.login;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,9 +15,9 @@ import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
-import by.test.dartlen.gallery.gallery.MainPageActivity;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -82,8 +81,7 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     }
 
     public void showMain(){
-        Intent intent = new Intent(getContext(), MainPageActivity.class);
-        startActivity(intent);
+        App.INSTANCE.getRouter().navigateTo("gallery");
     }
 
     @Override

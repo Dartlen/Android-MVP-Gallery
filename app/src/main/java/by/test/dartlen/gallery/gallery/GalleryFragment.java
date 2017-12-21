@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +55,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @BindView(R.id.progressBar2)
     ProgressBar progressBarImages;
 
+
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
     }
@@ -74,6 +76,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @Override
     public void onResume() {
         super.onResume();
+
     }
 
     @Override
@@ -89,6 +92,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
         View root = inflater.inflate(R.layout.gallery_fragment, container, false);
 
         ButterKnife.bind(this, root);
+
 
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {

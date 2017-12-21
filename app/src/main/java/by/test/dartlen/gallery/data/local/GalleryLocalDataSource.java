@@ -66,7 +66,7 @@ public class GalleryLocalDataSource{
     }
 
     public void postImage(GalleryRemoteDataSource.ImagePostCallback callback, String token, ImageData data) {
-
+        //TODO: добавить изображение в локальную бд
     }
 
     public void setImages(List<DataImage> data, String token) {

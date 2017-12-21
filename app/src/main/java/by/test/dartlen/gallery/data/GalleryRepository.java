@@ -244,6 +244,18 @@ public class GalleryRepository{
             }
         }, token, data);
 
+        mGalleryLocalDataSource.postImage(new GalleryRemoteDataSource.ImagePostCallback() {
+            @Override
+            public void onDataLoaded(ResponseDataImagePost dataResponse) {
+                callback.onDataLoaded(dataResponse);
+            }
+
+            @Override
+            public void onError(String error) {
+                callback.onError(error);
+            }
+        }, token, data);
+
     }
 
     public void setUser(Data user) {

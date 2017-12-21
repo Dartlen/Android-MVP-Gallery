@@ -44,7 +44,7 @@ public final class Image {
                     @Override
                     public void onError() {
                         //Try again online if cache failed
-                        Picasso.with(MainPageActivity.getAppContext())
+                        /*Picasso.with(MainPageActivity.getAppContext())
                                 .load(url)
                                 .error(R.drawable.avd_hide_password_1)
                                 .into(imageView, new Callback() {
@@ -57,7 +57,7 @@ public final class Image {
                                     public void onError() {
 
                                     }
-                                });
+                                });*/
                     }
                 });
     }

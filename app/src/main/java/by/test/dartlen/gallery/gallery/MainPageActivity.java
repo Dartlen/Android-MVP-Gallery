@@ -3,23 +3,21 @@ package by.test.dartlen.gallery.gallery;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,7 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.TextView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -52,14 +50,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.camera.CameraFragment;
 import by.test.dartlen.gallery.camera.CameraPresenter;
 import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.App;
-import by.test.dartlen.gallery.data.local.greendao.Images;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
+import by.test.dartlen.gallery.login.FirstFragment;
+import by.test.dartlen.gallery.login.LoginFragment;
+import by.test.dartlen.gallery.login.LoginPresenter;
+import by.test.dartlen.gallery.login.RegisterFragment;
+import by.test.dartlen.gallery.login.ViewPagerAdapter;
 import by.test.dartlen.gallery.map.MapFragment;
 import by.test.dartlen.gallery.map.MapPresenter;
 import by.test.dartlen.gallery.picture.PictureFragment;
@@ -75,26 +78,24 @@ public class MainPageActivity extends AppCompatActivity
 
     private GalleryRepository mGalleryRepository;
 
-    private FragmentManager mFragmentManager;
-    private FragmentTransaction mFragmentTransaction;
-
     private GalleryFragment mGalleryFragment;
-    private MapFragment mMapFragment;
-    private CameraFragment mCameraFragment;
-    private PictureFragment mPictureFragment;
-
-    private static MainPageActivity sInstance;
-
     private GalleryPresenter mGalleryPresenter;
-    private CameraPresenter mCameraPresenter;
-    private PicturePresenter mPicturePresenter;
+
+    private MapFragment mMapFragment;
     private MapPresenter mMapPresenter;
+
+    private CameraFragment mCameraFragment;
+    private CameraPresenter mCameraPresenter;
+
+    private PictureFragment mPictureFragment;
+    private PicturePresenter mPicturePresenter;
+
+    private FirstFragment mFirstFragment;
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
 
     private static final int  IMAGE=2000;
     private String imagestring;
-
 
     private final static int PLAY_SERVICES_REQUEST = 1000;
     private final static int REQUEST_CHECK_SETTINGS = 2000;
@@ -106,47 +107,61 @@ public class MainPageActivity extends AppCompatActivity
     double latitude;
     double longitude;
 
-    boolean isPermissionGranted=true;
+    boolean isPermissionGranted = true;
 
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mDrawerToggle;
-    private FloatingActionButton mFab;
+    //private FloatingActionButton mFab;
 
-    private boolean mToolBarNavigationListenerIsRegistered = false;
+    //private boolean mToolBarNavigationListenerIsRegistered = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //GalleryApplication.INSTANCE.getAppComponent().inject(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
 
-        sInstance = this;
-        setLoginHeader();
-
-        mFragmentManager = this.getSupportFragmentManager();
-
-        mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
-        if (mGalleryFragment == null) {
-            mGalleryFragment = GalleryFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mGalleryFragment, R.id.fr);
-        }
+        ButterKnife.bind(this);
+        //setLoginHeader();
 
         mGalleryRepository = Injection.provideGalleryRepository(getApplicationContext());
+
+        //mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
+        if (mGalleryFragment == null) {
+            mGalleryFragment = GalleryFragment.newInstance();
+            //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mGalleryFragment, R.id.fr);
+        }
         mGalleryPresenter = new GalleryPresenter(mGalleryRepository, mGalleryFragment);
 
-        mCameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
+
+        if(mFirstFragment == null)
+            mFirstFragment = mFirstFragment.newInstance();
+
+
+        //mCameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
         if (mCameraFragment == null) {
             mCameraFragment = CameraFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mCameraFragment, R.id.fr);
         }
         mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment);
 
-        mMapFragment  = MapFragment.newInstance();
+
+        if(mPictureFragment == null) {
+            mPictureFragment = PictureFragment.newInstance();
+        }
+        //mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, (Images) data);
+
+
+        if(mMapFragment == null) {
+            mMapFragment = MapFragment.newInstance();
+        }
         mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
+
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        /*mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -169,7 +184,7 @@ public class MainPageActivity extends AppCompatActivity
 
                 startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
@@ -179,10 +194,16 @@ public class MainPageActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        App.INSTANCE.getRouter().navigateTo("firstpage");
+
     }
 
     private void enableViews(boolean enable) {
-        if(mFab.getVisibility()==View.INVISIBLE){
+        /*if(mFab.getVisibility()==View.INVISIBLE){
             mFab.setVisibility(View.VISIBLE);
         }
         if (enable) {
@@ -205,8 +226,9 @@ public class MainPageActivity extends AppCompatActivity
             mDrawerToggle.setDrawerIndicatorEnabled(true);
             mDrawerToggle.setToolbarNavigationClickListener(null);
             mToolBarNavigationListenerIsRegistered = false;
-        }
+        }*/
     }
+
 
     @Override
     protected void onResume() {
@@ -223,14 +245,13 @@ public class MainPageActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        enableViews(false);
+        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //enableViews(false);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             mGalleryPresenter.onBackPressed();
-        }
-
+        }*/
 
     }
 
@@ -241,16 +262,20 @@ public class MainPageActivity extends AppCompatActivity
         protected Fragment createFragment(String screenKey, Object data) {
             switch(screenKey) {
                 case "map":
-                    enableViews(true);
+                    //enableViews(true);
                     return mMapFragment;
                 case "gallery":
-                    enableViews(true);
+                    //enableViews(true);
                     return mGalleryFragment;
                 case "picture":
-                    mPictureFragment = PictureFragment.newInstance();
+                    /*mPictureFragment = PictureFragment.newInstance();
                     mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, (Images)data);
-                    enableViews(true);
+                    enableViews(true);*/
                     return mPictureFragment;
+                case "firstpage":
+                    return mFirstFragment;
+                /*case "register":
+                    return mRegisterFragment;*/
                 default:
                     throw new RuntimeException("Unknown screen key!");
             }
@@ -267,62 +292,6 @@ public class MainPageActivity extends AppCompatActivity
         }
     };
 
-    /*private Navigator navigator = new Navigator() {
-        @Override
-        public void applyCommand(Command command) {
-            if (command instanceof Forward) {
-                forward((Forward) command);
-            } else if (command instanceof Replace) {
-                replace((Replace) command);
-            } else if (command instanceof Back) {
-                back();
-            } else if (command instanceof SystemMessage) {
-                Toast.makeText(StartActivity.this, ((SystemMessage) command).getMessage(), Toast.LENGTH_SHORT).show();
-            } else {
-                Log.e("Cicerone", "Illegal command for this screen: " + command.getClass().getSimpleName());
-            }
-        }
-
-        private void forward(Forward command) {
-            switch (command.getScreenKey()) {
-                case Screens.START_ACTIVITY_SCREEN:
-                    startActivity(new Intent(StartActivity.this, StartActivity.class));
-                    break;
-                case Screens.MAIN_ACTIVITY_SCREEN:
-                    startActivity(new Intent(StartActivity.this, MainActivity.class));
-                    break;
-                case Screens.BOTTOM_NAVIGATION_ACTIVITY_SCREEN:
-                    startActivity(new Intent(StartActivity.this, BottomNavigationActivity.class));
-                    break;
-                case Screens.PROFILE_SCREEN:
-                    startActivity(new Intent(StartActivity.this, ProfileActivity.class));
-                    break;
-                default:
-                    Log.e("Cicerone", "Unknown screen: " + command.getScreenKey());
-                    break;
-            }
-        }
-
-        private void replace(Replace command) {
-            switch (command.getScreenKey()) {
-                case Screens.START_ACTIVITY_SCREEN:
-                case Screens.MAIN_ACTIVITY_SCREEN:
-                case Screens.BOTTOM_NAVIGATION_ACTIVITY_SCREEN:
-                case Screens.PROFILE_SCREEN:
-                    forward(new Forward(command.getScreenKey(), command.getTransitionData()));
-                    finish();
-                    break;
-                default:
-                    Log.e("Cicerone", "Unknown screen: " + command.getScreenKey());
-                    break;
-            }
-        }
-
-        private void back() {
-            finish();
-        }
-    };*/
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -331,10 +300,10 @@ public class MainPageActivity extends AppCompatActivity
 
         if (id == R.id.nav_gallery) {
             App.INSTANCE.getRouter().navigateTo("gallery");
-            enableViews(false);
+            //enableViews(false);
         } else if (id == R.id.nav_map) {
             App.INSTANCE.getRouter().navigateTo("map");
-            enableViews(true);
+            //enableViews(true);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -343,18 +312,18 @@ public class MainPageActivity extends AppCompatActivity
     }
 
     private void setLoginHeader(){
-        SharedPreferences prefs;
+        /*SharedPreferences prefs;
         prefs = this.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         TextView navLogin = (TextView) headerView.findViewById(R.id.header_login);
-        navLogin.setText(prefs.getString("login",null));
+        navLogin.setText(prefs.getString("login",null));*/
     }
 
-    @NonNull
+    /*@NonNull
     public static MainPageActivity getAppContext() {
         return sInstance;
-    }
+    }*/
 
     private static File getOutputMediaFile(int type) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");

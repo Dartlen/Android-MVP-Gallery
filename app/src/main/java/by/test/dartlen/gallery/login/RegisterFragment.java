@@ -92,8 +92,9 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
 
     @Override
     public void showMain() {
-        Intent intent = new Intent(getContext(), MainPageActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(getContext(), MainPageActivity.class);
+        startActivity(intent);*/
+
     }
 
     @Override

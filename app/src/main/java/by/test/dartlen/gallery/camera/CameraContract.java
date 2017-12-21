@@ -7,7 +7,7 @@ import by.test.dartlen.gallery.BaseView;
 import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 
-/**
+/***
  * Created by Dartlen on 01.11.2017.
  */
 
@@ -17,8 +17,8 @@ public interface CameraContract {
         void postImage(ImageData image);
     }
     interface View extends BaseView<CameraContract.Presenter> {
-
         void setPresenter(Presenter presenter);
         void showEror(Exception e, String image);
+        void showMessage(String message);
     }
 }
