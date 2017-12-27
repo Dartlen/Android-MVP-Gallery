@@ -90,6 +90,11 @@ public class LoginPresenter implements LoginContract.Presenter{
             mLoginView.showDialog("Google sign in failed");
         }
     }
+
+    @Override
+    public void onClickedReset() {
+        App.INSTANCE.getRouter().navigateTo("resetpswd");
+    }
 }
 
 

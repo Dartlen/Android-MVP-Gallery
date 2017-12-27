@@ -53,6 +53,9 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     @BindView(R.id.sign_in_button)
     SignInButton mGoogleSignIn;
 
+    @BindView(R.id.btn_reset_password)
+    Button mButtonReset;
+
     private static final int RC_SIGN_IN = 9001;
 
     private FirebaseAuth mAuth;
@@ -83,6 +86,13 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
             @Override
             public void onClick(View v) {
                 signInGoogle();
+            }
+        });
+
+        mButtonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.onClickedReset();
             }
         });
         return root;

@@ -70,6 +70,8 @@ import by.test.dartlen.gallery.picture.PictureFragment;
 import by.test.dartlen.gallery.picture.PicturePresenter;
 import by.test.dartlen.gallery.register.RegisterFragment;
 import by.test.dartlen.gallery.register.RegisterPresenter;
+import by.test.dartlen.gallery.resetpswd.ResetpswdFragment;
+import by.test.dartlen.gallery.resetpswd.ResetpswdPresenter;
 import by.test.dartlen.gallery.util.ActivityUtils;
 import by.test.dartlen.gallery.util.Injection;
 import ru.terrakok.cicerone.Navigator;
@@ -105,6 +107,8 @@ public class MainPageActivity extends AppCompatActivity
     private RegisterFragment mRegisterFragment;
     private RegisterPresenter mRegisterPresenter;
 
+    private ResetpswdFragment mResetpswdFragment;
+    private ResetpswdPresenter mResetpswdPresenter;
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
 
@@ -194,6 +198,11 @@ public class MainPageActivity extends AppCompatActivity
             mMapFragment = MapFragment.newInstance();
         }
         mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
+
+        if(mResetpswdFragment == null){
+            mResetpswdFragment = ResetpswdFragment.newInstance();
+        }
+        mResetpswdPresenter = new ResetpswdPresenter(mResetpswdFragment, mAuth);
 
         setSupportActionBar(mToolbar);
 
@@ -306,9 +315,10 @@ public class MainPageActivity extends AppCompatActivity
                     enableViews(true);*/
                     return mPictureFragment;
                 case "firstpage":
+
                     return mFirstFragment;
-                /*case "register":
-                    return mRegisterFragment;*/
+                case "resetpswd":
+                    return mResetpswdFragment;
                 default:
                     throw new RuntimeException("Unknown screen key!");
             }

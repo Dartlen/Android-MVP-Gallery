@@ -62,11 +62,11 @@ public class RegisterPresenter implements RegisterContract.Presenter{
 
     @Override
     public void signUpCompleted(Task<AuthResult> task) {
+        mRegisterView.hideProgress();
         if (!task.isSuccessful()) {
-            mRegisterView.hideProgress();
             mRegisterView.showToast("Authentication failed." + task.getException(), Toast.LENGTH_SHORT);
         } else {
-            mRegisterView.hideProgress();
+
             App.INSTANCE.getRouter().navigateTo("gallery");
         }
     }

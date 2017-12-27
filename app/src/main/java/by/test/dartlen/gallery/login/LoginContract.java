@@ -19,18 +19,12 @@ import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
 public interface LoginContract {
     interface Presenter extends BasePresenter {
-        //void login();
-        //void register();
         void onClickedLogin(String login, String password);
         void signInCompleted(@NonNull Task<AuthResult> task);
         void googleAccountReturnedData(Intent data);
+        void onClickedReset();
     }
     interface View extends BaseView<LoginContract.Presenter>{
-        //void showLogin();
-        //void showRegister();
-        //void showMain();
-        //void showLoginError();
-        //LoginData getLoginPassword();
         void showDialog(String text);
         void showProgress();
         void hideProgress();

@@ -27,7 +27,7 @@ public class FirstFragment extends Fragment implements FirstContract.View{
     public static FirstFragment newInstance() {
         return new FirstFragment();
     }
-
+    private ViewPagerAdapter adapter;
     public FirstFragment(){}
 
     @Nullable
@@ -69,9 +69,10 @@ public class FirstFragment extends Fragment implements FirstContract.View{
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
+        adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         adapter.addFragment(mLoginFragment, "Login");
         adapter.addFragment(mRegisterFragment, "Register");
+
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 

@@ -1,6 +1,7 @@
-package by.test.dartlen.gallery.register;
+package by.test.dartlen.gallery.resetpswd;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -16,79 +17,83 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
+import by.test.dartlen.gallery.gallery.GalleryFragment;
 
-import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /***
- * Created by Dartlen on 26.10.2017.
+ * Created by Dartlen on 27.12.2017.
  */
 
-public class RegisterFragment extends Fragment implements RegisterContract.View{
+public class ResetpswdFragment extends Fragment implements ResetpswdContract.View {
 
-    private RegisterContract.Presenter mPresenterRegister;
-
-    @BindView(R.id.login)
-    EditText mLogin;
-
-    @BindView(R.id.password)
-    EditText mPassword;
-
-    @BindView(R.id.button)
-    Button mButton;
-
+    private ResetpswdContract.Presenter mResetpswdPresenter;
     private FirebaseAuth mAuth;
     private static ProgressDialog mDialog;
+    
+    @BindView(R.id.email)
+    EditText editTextEmail;
 
-    public static RegisterFragment newInstance(){
-        return new RegisterFragment();
+    @BindView(R.id.btn_reset_password)
+    Button bnt_reset_password;
+
+    public ResetpswdFragment(){}
+
+    public static ResetpswdFragment newInstance() {
+        return new ResetpswdFragment();
     }
 
-    public RegisterFragment(){}
+    @Override
+    public void setPresenter(ResetpswdContract.Presenter presenter) {
+        mResetpswdPresenter = checkNotNull(presenter, "presenter cannot be null!");
+    }
 
     @Override
-    public void setPresenter(@NonNull RegisterContract.Presenter presenter) {
-        mPresenterRegister = checkNotNull(presenter);
+    public void setAuth(FirebaseAuth auth) {
+        mAuth = checkNotNull(auth, "auth cannot be null!");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_register, container, false);
-        ButterKnife.bind(this, root);
-        mButton.setOnClickListener(new View.OnClickListener() {
+        View root = inflater.inflate(R.layout.fragment_resetpswd, container, false);
+        ButterKnife.bind(this,root);
+
+        bnt_reset_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenterRegister.onClickedRegister(mLogin.getText().toString(), mPassword.getText().toString());
+                mResetpswdPresenter.onClickedResetpswd(editTextEmail.getText().toString());
             }
         });
+
         return root;
     }
 
     @Override
-    public void setAuth(FirebaseAuth firebaseAuth) {
-        mAuth = firebaseAuth;
+    public void resetpswd(String email) {
+        mAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        mResetpswdPresenter.resetCompleted(task);
+                    }
+                });
     }
 
     @Override
-    public void signUp(String login, String password) {
-        mAuth.createUserWithEmailAndPassword(mLogin.getText().toString(), mPassword.getText().toString())
-                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        mPresenterRegister.signUpCompleted(task);
-                    }
-                });
+    public void showToast(String text, int toastTime) {
+        Toast.makeText(getContext(),text, toastTime).show();
     }
 
     @Override
@@ -108,7 +113,7 @@ public class RegisterFragment extends Fragment implements RegisterContract.View{
 
     @Override
     public void showProgress() {
-        mDialog = ProgressDialog.show(getContext(),"", "please wait registration");
+        mDialog = ProgressDialog.show(getContext(),"", "please wait sendind mail");
     }
 
     @Override
@@ -116,8 +121,4 @@ public class RegisterFragment extends Fragment implements RegisterContract.View{
         mDialog.dismiss();
     }
 
-    @Override
-    public void showToast(String text, int toastTime) {
-        Toast.makeText(getActivity(), text, toastTime).show();
-    }
 }

@@ -18,8 +18,8 @@ public interface RegisterContract {
     }
     interface View extends BaseView<RegisterContract.Presenter> {
         void setAuth(FirebaseAuth firebaseAuth);
-        void showDialog(String text);
         void signUp(String login, String password);
+        void showDialog(String text);
         void showProgress();
         void hideProgress();
         void showToast(String text, int toastTime);

@@ -10,8 +10,10 @@
     <string name="login">Login</string>
     <string name="forgot_password">Forgot your password?</string>
     <string name="sing_up">SING UP</string>
-
-    <string name="psswd">******</string>
+    <string name="btn_forgot_password">Forgot yor password?</string>
+    <string name="hint_email">Email</string>
+    <string name="psswd">Password</string>
+    <string name="btn_reset_password">RESET PASSWORD</string>
 
     <string name="log">LOG IN</string>
     <string name="clear"> </string>
