@@ -31,7 +31,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:layout_marginTop="0dp"
-                android:hint="@string/login"
+                android:hint="Login"
+                android:text="dartlen@tut.by"
                 android:inputType="" />
         </android.support.design.widget.TextInputLayout>
 
@@ -45,15 +46,24 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:hint="@string/psswd"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:text="123123"/>
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/button"
             style="@style/Button"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:text="@string/login" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -36,6 +36,8 @@
 
     </android.support.constraint.ConstraintLayout>
 
+
+
     <ProgressBar
         android:id="@+id/progressBar2"
         android:layout_width="wrap_content"

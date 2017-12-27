@@ -3,19 +3,16 @@ package by.test.dartlen.gallery.gallery;
 
 import android.app.Activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TabLayout;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.util.Base64;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -28,6 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,6 +40,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -58,15 +59,17 @@ import by.test.dartlen.gallery.camera.CameraPresenter;
 import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
-import by.test.dartlen.gallery.login.FirstFragment;
+import by.test.dartlen.gallery.first.FirstContract;
+import by.test.dartlen.gallery.first.FirstFragment;
+import by.test.dartlen.gallery.first.FirstPresenter;
 import by.test.dartlen.gallery.login.LoginFragment;
 import by.test.dartlen.gallery.login.LoginPresenter;
-import by.test.dartlen.gallery.login.RegisterFragment;
-import by.test.dartlen.gallery.login.ViewPagerAdapter;
 import by.test.dartlen.gallery.map.MapFragment;
 import by.test.dartlen.gallery.map.MapPresenter;
 import by.test.dartlen.gallery.picture.PictureFragment;
 import by.test.dartlen.gallery.picture.PicturePresenter;
+import by.test.dartlen.gallery.register.RegisterFragment;
+import by.test.dartlen.gallery.register.RegisterPresenter;
 import by.test.dartlen.gallery.util.ActivityUtils;
 import by.test.dartlen.gallery.util.Injection;
 import ru.terrakok.cicerone.Navigator;
@@ -91,6 +94,17 @@ public class MainPageActivity extends AppCompatActivity
     private PicturePresenter mPicturePresenter;
 
     private FirstFragment mFirstFragment;
+    private FirstPresenter mFirstPresneter;
+
+
+    private FirstContract.Presenter mFirstPresenter;
+
+    private LoginFragment mLoginFragment;
+    private LoginPresenter mLoginPresenter;
+
+    private RegisterFragment mRegisterFragment;
+    private RegisterPresenter mRegisterPresenter;
+
 
     private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
 
@@ -104,14 +118,28 @@ public class MainPageActivity extends AppCompatActivity
 
     private GoogleApiClient mGoogleApiClient;
 
+    private GoogleSignInClient mGoogleSignInClient;
+
+    private FirebaseAuth mAuth;
+
     double latitude;
     double longitude;
 
     boolean isPermissionGranted = true;
 
-    private Toolbar mToolbar;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
+
     private ActionBarDrawerToggle mDrawerToggle;
-    //private FloatingActionButton mFab;
+
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+
+    @BindView(R.id.fab)
+    FloatingActionButton mFab;
+
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
 
     //private boolean mToolBarNavigationListenerIsRegistered = false;
 
@@ -126,42 +154,53 @@ public class MainPageActivity extends AppCompatActivity
 
         mGalleryRepository = Injection.provideGalleryRepository(getApplicationContext());
 
-        //mGalleryFragment = (GalleryFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
         if (mGalleryFragment == null) {
             mGalleryFragment = GalleryFragment.newInstance();
-            //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mGalleryFragment, R.id.fr);
         }
         mGalleryPresenter = new GalleryPresenter(mGalleryRepository, mGalleryFragment);
 
 
+        if (mLoginFragment == null) {
+            mLoginFragment = mLoginFragment.newInstance();
+            //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mLoginFragment, R.id.fr);
+        }
+
+        if(mRegisterFragment ==null)
+            mRegisterFragment = mRegisterFragment.newInstance();
+        mRegisterPresenter = new RegisterPresenter();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mAuth = FirebaseAuth.getInstance();
+        mLoginPresenter = new LoginPresenter(Injection.provideGalleryRepository(this),
+                mLoginFragment, mRegisterFragment, mAuth, mGoogleSignInClient );
+
         if(mFirstFragment == null)
             mFirstFragment = mFirstFragment.newInstance();
+        mFirstPresneter = new FirstPresenter(mGalleryRepository, mFirstFragment, mLoginFragment, mRegisterFragment);
 
 
-        //mCameraFragment = (CameraFragment) getSupportFragmentManager().findFragmentById(R.id.fr);
         if (mCameraFragment == null) {
             mCameraFragment = CameraFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mCameraFragment, R.id.fr);
         }
         mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment);
 
-
         if(mPictureFragment == null) {
             mPictureFragment = PictureFragment.newInstance();
         }
-        //mPicturePresenter = new PicturePresenter(mGalleryRepository, mPictureFragment, (Images) data);
-
 
         if(mMapFragment == null) {
             mMapFragment = MapFragment.newInstance();
         }
         mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
 
-
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        /*mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -184,19 +223,17 @@ public class MainPageActivity extends AppCompatActivity
 
                 startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
             }
-        });*/
+        });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(
                 this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener( mDrawerToggle);
         mDrawerToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        //drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        mToolbar.setVisibility(View.INVISIBLE);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
         App.INSTANCE.getRouter().navigateTo("firstpage");
 

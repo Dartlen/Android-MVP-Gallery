@@ -43,6 +43,6 @@ public class MapPresenter implements MapContract.Presenter{
             public void onError(String error) {
 
             }
-        },1, mGalleryRepository.getUser().getToken());
+        },1, "TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3");//mGalleryRepository.getUser().getToken());
     }
 }

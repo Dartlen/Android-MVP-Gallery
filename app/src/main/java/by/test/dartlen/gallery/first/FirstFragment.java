@@ -1,10 +1,11 @@
-package by.test.dartlen.gallery.login;
+package by.test.dartlen.gallery.first;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.util.Injection;
+import by.test.dartlen.gallery.login.LoginFragment;
+import by.test.dartlen.gallery.register.RegisterFragment;
+import by.test.dartlen.gallery.login.ViewPagerAdapter;
 
 /***
  * Created by Dartlen on 21.12.2017.
  */
 
-public class FirstFragment extends Fragment {
+public class FirstFragment extends Fragment implements FirstContract.View{
 
     public static FirstFragment newInstance() {
         return new FirstFragment();
@@ -37,27 +40,25 @@ public class FirstFragment extends Fragment {
 
     private Unbinder unbinder;
 
-    private LoginFragment mLoginFragment;
-    private LoginPresenter mLoginPresenter;
+    private FirstContract.Presenter mFirstPresenter;
 
+    private LoginFragment mLoginFragment;
     private RegisterFragment mRegisterFragment;
-    //private RegisterPresenter mRegisterPresenter;
+
+    @Override
+    public void setPresenter(FirstContract.Presenter presenter) {
+        this.mFirstPresenter = presenter;
+    }
+
+    @Override
+    public void setViewFragments(LoginFragment loginFragment, RegisterFragment registerFragment) {
+        mLoginFragment    = loginFragment;
+        mRegisterFragment = registerFragment;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (mLoginFragment == null) {
-            mLoginFragment = mLoginFragment.newInstance();
-            //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mLoginFragment, R.id.fr);
-        }
-
-        if(mRegisterFragment ==null)
-            mRegisterFragment = mRegisterFragment.newInstance();
-
-        mLoginPresenter = new LoginPresenter(Injection.provideGalleryRepository(getContext().getApplicationContext()),
-                mLoginFragment, mRegisterFragment);
-
     }
 
     @Nullable
@@ -65,6 +66,8 @@ public class FirstFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.firstpage_fragment,container , false);
         ButterKnife.bind(this, root);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager());
         adapter.addFragment(mLoginFragment, "Login");

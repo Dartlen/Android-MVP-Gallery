@@ -1,8 +1,7 @@
-package by.test.dartlen.gallery.login;
+package by.test.dartlen.gallery.register;
 
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,20 +12,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.firebase.auth.FirebaseAuth;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
-import by.test.dartlen.gallery.gallery.MainPageActivity;
+import by.test.dartlen.gallery.login.LoginContract;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
 /*** Created by Dartlen on 26.10.2017.
  */
 
-public class RegisterFragment extends Fragment implements LoginContract.View, View.OnClickListener {
+public class RegisterFragment extends Fragment implements RegisterContract.View, View.OnClickListener {
 
-    private LoginContract.Presenter mPresenter;
+    private RegisterContract.Presenter mPresenterRegister;
 
     @BindView(R.id.login)
     EditText mLogin;
@@ -49,8 +52,8 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
     public RegisterFragment(){}
 
     @Override
-    public void setPresenter(@NonNull LoginContract.Presenter presenter) {
-        mPresenter = checkNotNull(presenter);
+    public void setPresenter(@NonNull RegisterContract.Presenter presenter) {
+        mPresenterRegister = checkNotNull(presenter);
     }
 
     @Override
@@ -82,7 +85,7 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
 
     }*/
 
-    @Override
+   /* @Override
     public LoginData getLoginPassword() {
         if(mPasswordConfirm.getText().toString().equals(mPassword.getText().toString()))
             return new LoginData(mLogin.getText().toString(), mPassword.getText().toString());
@@ -95,19 +98,14 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
         /*Intent intent = new Intent(getContext(), MainPageActivity.class);
         startActivity(intent);*/
 
-    }
+    //}
 
     @Override
     public void onClick(View v) {
-        mPresenter.register();
+        //mPresenter.register();
     }
 
-    @Override
-    public void showDialog() {
-
-    }
-
-    @Override
+    /*@Override
     public void showProgress() {
         mDialog.show(getContext(),
                 "ProgressDialog",
@@ -118,4 +116,24 @@ public class RegisterFragment extends Fragment implements LoginContract.View, Vi
     public void hideProgress() {
         mDialog.dismiss();
     }
+
+    @Override
+    public void setAuth(FirebaseAuth firebaseAuth, GoogleSignInClient googleSignInClient) {
+
+    }
+
+    @Override
+    public void signin(String login, String password) {
+
+    }
+
+    @Override
+    public void showDialog(String text) {
+
+    }
+
+    @Override
+    public void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+
+    }*/
 }

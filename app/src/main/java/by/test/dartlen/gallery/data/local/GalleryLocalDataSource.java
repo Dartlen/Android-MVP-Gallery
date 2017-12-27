@@ -53,7 +53,7 @@ public class GalleryLocalDataSource{
     }
 
     public void getImages(GalleryRemoteDataSource.LoadImageCallback callback, int page, String token) {
-        List<Images> imagesData = mImagesDao.queryBuilder()
+        /*List<Images> imagesData = mImagesDao.queryBuilder()
                 .orderAsc(ImagesDao.Properties.Id)
                 .list();
         ResponseDataImage tmpData = new ResponseDataImage();
@@ -61,7 +61,7 @@ public class GalleryLocalDataSource{
         if(tmpData.getData().size()==0)
             callback.onError("Null size");
         tmpData.setStatus(200);
-        callback.onDataLoaded(tmpData);
+        callback.onDataLoaded(tmpData);*/
 
     }
 
@@ -70,13 +70,13 @@ public class GalleryLocalDataSource{
     }
 
     public void setImages(List<DataImage> data, String token) {
-        for(Images obj: mapper.toImagesFromDataImages(data))
-            mImagesDao.insertOrReplace(obj);
+        /*for(Images obj: mapper.toImagesFromDataImages(data))
+            mImagesDao.insertOrReplace(obj);*/
     }
 
     public void setUser(Data user) {
 
-        List<Users> userId = mUsersDao.queryBuilder()
+        /*List<Users> userId = mUsersDao.queryBuilder()
                 .where(UsersDao.Properties.Login.eq(user.getLogin()))
                 .orderAsc(UsersDao.Properties.Login)
                 .list();
@@ -90,12 +90,12 @@ public class GalleryLocalDataSource{
         editor.putString("login", user.getLogin());
         editor.putString("token", user.getToken());
         editor.putInt("userid", user.getUserId());
-        editor.apply();
+        editor.apply();*/
 
     }
 
     public Users getUser() {
-        prefs = mContext.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
+        /*prefs = mContext.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
         String login = prefs.getString("login","");
         List<Users> users = mUsersDao.queryBuilder()
                 .where(UsersDao.Properties.Login.eq(login))
@@ -106,7 +106,8 @@ public class GalleryLocalDataSource{
         }else
         {
             return null;
-        }
+        }*/
+        return null;
     }
 
     public List<DataImage> toDataImages(List<Images> list) {

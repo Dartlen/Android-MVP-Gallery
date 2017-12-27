@@ -8,6 +8,7 @@
 
     <string name="registration">Register</string>
     <string name="login">Login</string>
+    <string name="forgot_password">Forgot your password?</string>
     <string name="sing_up">SING UP</string>
 
     <string name="psswd">******</string>
