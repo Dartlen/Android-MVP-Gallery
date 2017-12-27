@@ -28,9 +28,9 @@ public interface LoginContract {
     interface View extends BaseView<LoginContract.Presenter>{
         //void showLogin();
         //void showRegister();
-        void showMain();
+        //void showMain();
         //void showLoginError();
-        LoginData getLoginPassword();
+        //LoginData getLoginPassword();
         void showDialog(String text);
         void showProgress();
         void hideProgress();

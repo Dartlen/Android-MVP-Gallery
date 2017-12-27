@@ -141,8 +141,6 @@ public class MainPageActivity extends AppCompatActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    //private boolean mToolBarNavigationListenerIsRegistered = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -150,7 +148,14 @@ public class MainPageActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
 
         ButterKnife.bind(this);
-        //setLoginHeader();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mAuth = FirebaseAuth.getInstance();
 
         mGalleryRepository = Injection.provideGalleryRepository(getApplicationContext());
 
@@ -162,22 +167,13 @@ public class MainPageActivity extends AppCompatActivity
 
         if (mLoginFragment == null) {
             mLoginFragment = mLoginFragment.newInstance();
-            //ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mLoginFragment, R.id.fr);
         }
 
         if(mRegisterFragment ==null)
             mRegisterFragment = mRegisterFragment.newInstance();
-        mRegisterPresenter = new RegisterPresenter();
+        mRegisterPresenter = new RegisterPresenter(mRegisterFragment, mAuth);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mAuth = FirebaseAuth.getInstance();
-        mLoginPresenter = new LoginPresenter(Injection.provideGalleryRepository(this),
-                mLoginFragment, mRegisterFragment, mAuth, mGoogleSignInClient );
+        mLoginPresenter = new LoginPresenter(mLoginFragment, mAuth, mGoogleSignInClient);
 
         if(mFirstFragment == null)
             mFirstFragment = mFirstFragment.newInstance();
@@ -347,20 +343,6 @@ public class MainPageActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    private void setLoginHeader(){
-        /*SharedPreferences prefs;
-        prefs = this.getSharedPreferences("by.test.gallery", MODE_PRIVATE);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View headerView = navigationView.getHeaderView(0);
-        TextView navLogin = (TextView) headerView.findViewById(R.id.header_login);
-        navLogin.setText(prefs.getString("login",null));*/
-    }
-
-    /*@NonNull
-    public static MainPageActivity getAppContext() {
-        return sInstance;
-    }*/
 
     private static File getOutputMediaFile(int type) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
