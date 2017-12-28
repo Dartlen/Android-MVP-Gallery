@@ -1,21 +1,24 @@
 package by.test.dartlen.gallery.data.remote;
 
+import android.content.ContentResolver;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.webkit.MimeTypeMap;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnPausedListener;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
-import by.test.dartlen.gallery.data.remote.mockremote.UserServiceMockAdapter;
-import by.test.dartlen.gallery.data.remote.retrofit.ApiFactory;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImagePost;
-import by.test.dartlen.gallery.data.remote.retrofit.user.DataResponse;
-import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
-import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponse;
-import by.test.dartlen.gallery.data.remote.retrofit.RetrofitResponseCallback;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.Date;
 
 /***
  * Created by Dartlen on 27.10.2017.
@@ -25,6 +28,10 @@ public class GalleryRemoteDataSource {
 
     private static GalleryRemoteDataSource INSTANCE;
 
+    private DatabaseReference mDataReference;
+    private StorageReference imageReference;
+    private StorageReference fileRef;
+
     public static GalleryRemoteDataSource getInstance(){
         if(INSTANCE == null){
             INSTANCE = new GalleryRemoteDataSource();
@@ -32,90 +39,63 @@ public class GalleryRemoteDataSource {
         return INSTANCE;
     }
 
-    private GalleryRemoteDataSource(){}
+    public GalleryRemoteDataSource(){}
 
-    public void signin(final @NonNull LoadLoginCallback callback, final @NonNull LoginData loginData) {
-        retrofit2.Call<DataResponse> call = new UserServiceMockAdapter()
-                .swapretrofit(ApiFactory.buildRetrofit()).Signin(loginData);
-        call.enqueue(new RetrofitResponse<DataResponse>(new RetrofitResponseCallback<DataResponse>() {
-            @Override
-            public void onDataLoaded(DataResponse dataResponse) {
-                callback.onLoggined(dataResponse);
-            }
+    public void postImage(Uri fileUri, String fileName){
+        mDataReference = FirebaseDatabase.getInstance().getReference("images");
+        imageReference = FirebaseStorage.getInstance().getReference().child("images");
+        fileRef = imageReference.child(fileName);
+        fileRef.putFile(fileUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //progressDialog.dismiss();
 
-            @Override
-            public void onError(String error) {
-                callback.onDataNotAvailable(error);
-            }
-        }));
+                        String name = taskSnapshot.getMetadata().getName();
+                        String url = taskSnapshot.getDownloadUrl().toString();
+
+                        Log.e("dsadas", "Uri: " + url);
+                        //Log.e(TAG, "Name: " + name);
+
+                        writeNewImageInfoToDB(name, url);
+
+                        //Toast.makeText(StorageActivity.this, "File Uploaded ", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        //progressDialog.dismiss();
+                        Log.e("dsad", "Name: " );
+                        //Toast.makeText(StorageActivity.this, exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        // progress percentage
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                        // percentage in progress dialog
+                        //progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                    }
+                })
+                .addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                        System.out.println("Upload is paused!");
+                    }
+                });
     }
 
-    public void signup(final @NonNull LoadLoginCallback callback, final @NonNull LoginData loginData) {
-        retrofit2.Call<DataResponse> call = ApiFactory.get().Signup(loginData);
-        call.enqueue(new RetrofitResponse<DataResponse>(new RetrofitResponseCallback<DataResponse>() {
-            @Override
-            public void onDataLoaded(DataResponse dataResponse) {
-                callback.onLoggined(dataResponse);
-            }
+    private void writeNewImageInfoToDB(String name, String url) {
+        Image info = new Image(url, 123L, 41.24,31.32);
 
-            @Override
-            public void onError(String error) {
-                callback.onDataNotAvailable(error);
-            }
-        }));
+        String key = mDataReference.push().getKey();
+        mDataReference.child(key).setValue(info);
     }
 
-    public void getImages(final @NotNull LoadImageCallback callback, final @NotNull int page,
-                          final @NotNull String token) {
-        final retrofit2.Call<ResponseDataImage> call = new UserServiceMockAdapter()
-                .swapretrofit(ApiFactory.buildRetrofit()).getImages(page, token);
-        call.enqueue(new RetrofitResponse<ResponseDataImage>(new RetrofitResponseCallback<ResponseDataImage>() {
-            @Override
-            public void onDataLoaded(ResponseDataImage dataResponse) {
-                callback.onDataLoaded(dataResponse);
-            }
 
-            @Override
-            public void onError(String error) {
-                callback.onError(error);
-            }
-        }));
-
-    }
-
-    public void postImage(final ImagePostCallback callback, String token, ImageData data) {
-        final retrofit2.Call<ResponseDataImagePost> call = new UserServiceMockAdapter()
-                .swapretrofit(ApiFactory.buildRetrofit()).postImage(token, data);
-
-        call.enqueue(new Callback<ResponseDataImagePost>() {
-            @Override
-            public void onResponse(Call<ResponseDataImagePost> call, Response<ResponseDataImagePost> response) {
-                ResponseDataImagePost dataImage = response.body();
-                callback.onDataLoaded(dataImage);
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDataImagePost> call, Throwable t) {
-                callback.onError(t.toString());
-            }
-        });
-
-    }
-
-    public interface LoadLoginCallback{
-        void onLoggined(DataResponse login);
-        void onDataNotAvailable(String error);
-    }
-
-    public interface LoadImageCallback{
-        void onDataLoaded(ResponseDataImage dataResponse);
-        void onError(String error);
-    }
-
-    public interface ImagePostCallback{
-        void onDataLoaded(ResponseDataImagePost dataResponse);
-        void onError(String error);
-    }
 
 }
 

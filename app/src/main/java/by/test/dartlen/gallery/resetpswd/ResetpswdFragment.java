@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.gallery.GalleryFragment;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -69,7 +68,6 @@ public class ResetpswdFragment extends Fragment implements ResetpswdContract.Vie
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_resetpswd, container, false);
         ButterKnife.bind(this,root);
-
         bnt_reset_password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

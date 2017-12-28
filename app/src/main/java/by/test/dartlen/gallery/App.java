@@ -34,11 +34,11 @@ public class App extends Application {
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
 
-        Picasso picasso = new Picasso.Builder(this)
+        /*Picasso picasso = new Picasso.Builder(this)
                 .downloader(new OkHttp3Downloader(this))
                 .build();
 
-        Picasso.setSingletonInstance(picasso);
+        Picasso.setSingletonInstance(picasso);*/
     }
 
     public DaoSession getDaoSession() {

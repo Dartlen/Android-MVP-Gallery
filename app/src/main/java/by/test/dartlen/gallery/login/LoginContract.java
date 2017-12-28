@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
-import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
 /***
  * Created by Dartlen on 26.10.2017.

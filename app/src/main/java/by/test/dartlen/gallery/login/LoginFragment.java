@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -23,14 +22,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.remote.retrofit.user.LoginData;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -101,7 +97,7 @@ public class LoginFragment extends Fragment implements LoginContract.View, View.
     @Override
     public void onResume() {
         super.onResume();
-        signOut();
+        //signOut();
     }
 
     @Override

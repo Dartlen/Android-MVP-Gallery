@@ -1,11 +1,12 @@
 package by.test.dartlen.gallery.camera;
 
+import android.content.Intent;
+
 import java.io.File;
 
 import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
-import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
+
 
 /***
  * Created by Dartlen on 01.11.2017.
@@ -14,11 +15,14 @@ import by.test.dartlen.gallery.data.remote.retrofit.image.ImageData;
 public interface CameraContract {
 
     interface Presenter extends BasePresenter {
-        void postImage(ImageData image);
+        void getLocation();
+        void startCamera();
+        void onCaptureImageResult(Intent data);
     }
     interface View extends BaseView<CameraContract.Presenter> {
         void setPresenter(Presenter presenter);
         void showEror(Exception e, String image);
         void showMessage(String message);
+        void showCameraActivityResult(Intent intent, int CAPTURE_IMAGE_REQUEST_CODE);
     }
 }

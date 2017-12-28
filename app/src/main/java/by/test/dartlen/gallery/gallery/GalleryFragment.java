@@ -3,6 +3,7 @@ package by.test.dartlen.gallery.gallery;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.widget.DrawerLayout;
@@ -15,17 +16,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.Mapper;
 import by.test.dartlen.gallery.App;
-import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -37,18 +33,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
     private GalleryContract.Presenter mPresenter;
 
-    private Mapper mapper;
-
-    public int NUM_ITEMS_PAGE = 5;
-
     private ImageAdapter musicRecyclerAdapter;
-
-    private List<Images> listList = new ArrayList<>(0);
-
-    private int paginationCounter = 0;
-
-    private boolean isLoading = true;
-    private int pagecounter = 1;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -56,7 +41,6 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     ProgressBar progressBar;
     @BindView(R.id.progressBar2)
     ProgressBar progressBarImages;
-
 
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
@@ -72,20 +56,17 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mapper = new Mapper(getContext());
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        mPresenter.start();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        pagecounter=1;
-        paginationCounter = 0;
     }
 
     @Nullable
@@ -101,7 +82,6 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
-
 
         ItemClickSupport.addTo(recyclerView)
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -130,7 +110,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-                LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
+                /*LinearLayoutManager layoutManager = LinearLayoutManager.class.cast(recyclerView.getLayoutManager());
 
                 int totalItemCount = layoutManager.getItemCount();
 
@@ -147,7 +127,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                                 pagecounter++;
                                 mPresenter.loadFirstPage(pagecounter);}
                         }
-                }
+                }*/
             }
         });
         //mPresenter.loadFirstPage(pagecounter);
@@ -163,16 +143,12 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
-    public void addItemToAdapter(ResponseDataImage dataResponse) {
-        listList = mapper.toImagesFromDataImages(dataResponse.getData());
-        paginationCounter += NUM_ITEMS_PAGE;
-        for (int i = paginationCounter - NUM_ITEMS_PAGE; i < paginationCounter; i++) {
-            progressBar.setVisibility(View.VISIBLE);
-            if (i < listList.size() && listList.get(i) != null)
-
-                musicRecyclerAdapter.add(listList.get(i));
-        }
-        isLoading=false;
+    @Override
+    public void showLogin(String login) {
+        NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navLogin = (TextView) headerView.findViewById(R.id.header_login);
+        navLogin.setText(login);
     }
 }
 

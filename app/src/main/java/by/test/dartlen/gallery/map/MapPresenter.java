@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.data.Mapper;
 import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
-import by.test.dartlen.gallery.data.remote.retrofit.image.ResponseDataImage;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,16 +32,5 @@ public class MapPresenter implements MapContract.Presenter{
 
     private void loadPoints(){
 
-        mGalleryRepository.getLocalImages(new GalleryRemoteDataSource.LoadImageCallback() {
-            @Override
-            public void onDataLoaded(ResponseDataImage dataResponse) {
-                mMapView.showPoints(dataResponse.getData());
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        },1, "TTlobxhNFvm2zO2Jwm3uniSJKOaTzHltywQAvqNZ73hTVfqmmwPCFFS8UDJ7IUx3");//mGalleryRepository.getUser().getToken());
     }
 }

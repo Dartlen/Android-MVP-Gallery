@@ -2,7 +2,6 @@
 
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backg">
@@ -27,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:layout_marginTop="0dp"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType=""
                 android:text="dartlen@tut.by" />
         </android.support.design.widget.TextInputLayout>
@@ -42,8 +41,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="0dp"
                 android:hint="@string/psswd"
-
-                android:text="123123123" />
+                android:inputType="textPassword"
+                android:text="123123" />
         </android.support.design.widget.TextInputLayout>
 
         <Button

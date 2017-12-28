@@ -1,36 +1,18 @@
 package by.test.dartlen.gallery.map;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 import by.test.dartlen.gallery.R;
 import by.test.dartlen.gallery.data.Mapper;
-import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.data.remote.retrofit.image.DataImage;
-import by.test.dartlen.gallery.gallery.MainPageActivity;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -50,7 +32,7 @@ public class MapFragment extends Fragment implements MapContract.View {
         mMapPresenter = checkNotNull(presenter);
     }
 
-    @Override
+    /*@Override
     public void showPoints(final List<DataImage> imagesData) {
         final List<Images> iData = mMapper.toImagesFromDataImages(imagesData);
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -68,7 +50,7 @@ public class MapFragment extends Fragment implements MapContract.View {
                 }
             }
         });
-    }
+    }*/
 
     public MapFragment(){}
 
@@ -79,7 +61,7 @@ public class MapFragment extends Fragment implements MapContract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        mMapper = new Mapper(getContext());
+        mMapper = new Mapper();
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
 

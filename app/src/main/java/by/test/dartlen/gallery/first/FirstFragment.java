@@ -64,7 +64,7 @@ public class FirstFragment extends Fragment implements FirstContract.View{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.firstpage_fragment,container , false);
+        View root = inflater.inflate(R.layout.fragment_firstpage,container , false);
         ButterKnife.bind(this, root);
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
@@ -75,8 +75,13 @@ public class FirstFragment extends Fragment implements FirstContract.View{
 
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
-
         return root;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
     }
 
     @Override
