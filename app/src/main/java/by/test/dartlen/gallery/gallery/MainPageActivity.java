@@ -124,6 +124,9 @@ public class MainPageActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_page);
 
         ButterKnife.bind(this);
+        if (checkPlayServices()) {
+            buildGoogleApiClient();
+        }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -233,10 +236,8 @@ public class MainPageActivity extends AppCompatActivity
                     if (mCameraFragment == null) {
                         mCameraFragment = CameraFragment.newInstance();
                     }
-                    if (checkPlayServices()) {
-                        buildGoogleApiClient();
-                    }
-                    mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment, mGoogleApiClient);
+
+                    mCameraPresenter = new CameraPresenter(mGalleryRepository, mCameraFragment, mGoogleApiClient, mAuth);
                     return mCameraFragment;
                 default:
                     throw new RuntimeException("Unknown screen key!");

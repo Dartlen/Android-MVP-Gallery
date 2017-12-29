@@ -1,17 +1,17 @@
 package by.test.dartlen.gallery.camera;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
+import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsStates;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.UploadTask;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
@@ -25,7 +25,7 @@ import java.util.Date;
 
 import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.GalleryRepository;
-import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
+import by.test.dartlen.gallery.data.remote.PostImageCallback;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,6 +37,7 @@ public class CameraPresenter implements CameraContract.Presenter {
 
     private final GalleryRepository mGalleryRepository;
     private final CameraContract.View mCameraView;
+    private final FirebaseAuth mAuth;
     private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
     private static final int  IMAGE=2000;
     private boolean isPermissionGranted = true;
@@ -44,24 +45,47 @@ public class CameraPresenter implements CameraContract.Presenter {
     private GoogleApiClient mGoogleApiClient;
     private double latitude;
     private double longitude;
-    private String imagestring;
+    private String imagepath;
+    private String imagename;
+    private Long imagedate;
 
     public CameraPresenter(@NotNull GalleryRepository galleryRepository, @NotNull CameraContract.View CameraView,
-                           @NotNull GoogleApiClient googleApiClient){
+                           @NotNull GoogleApiClient googleApiClient, @NotNull FirebaseAuth firebaseAuth){
         mGalleryRepository = checkNotNull(galleryRepository,"gallery cannot be null");
         mCameraView        = checkNotNull(CameraView, "camerafragment cannot be null");
         mGoogleApiClient   = checkNotNull(googleApiClient, "googleapiclient cannot be null!");
+        mAuth              = checkNotNull(firebaseAuth, "firebase cannot be null!");
         mCameraView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        if(imagestring==null)
+        if(imagepath==null)
             startCamera();
         else{
+            mCameraView.showProgressDialog();
+            mGalleryRepository.postImage(new PostImageCallback() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    mCameraView.dismissDialog();
+                    mCameraView.showToast( "Image Uploaded ", Toast.LENGTH_LONG);
+                }
 
+                @Override
+                public void onFailure(Exception exception) {
+                    mCameraView.showToast(exception.getMessage(), Toast.LENGTH_LONG);
+                }
 
+                @Override
+                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
 
+                }
+
+                @Override
+                public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            }, Uri.parse(imagepath), imagename, latitude, longitude, imagedate, mAuth.getCurrentUser().getUid() );
             App.INSTANCE.getRouter().navigateTo("gallery");
         }
     }
@@ -98,7 +122,7 @@ public class CameraPresenter implements CameraContract.Presenter {
         }
     }
 
-    private static File getOutputMediaFile(int type) {
+    private File getOutputMediaFile(int type) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "MyCameraApp");
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
@@ -106,6 +130,8 @@ public class CameraPresenter implements CameraContract.Presenter {
             }
         }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        imagedate = new Date().getTime();
+        imagename = "IMG_" + timeStamp;
         File mediaFile;
         if(type==IMAGE)
         {
@@ -118,23 +144,16 @@ public class CameraPresenter implements CameraContract.Presenter {
         return mediaFile;
     }
 
-
-
     public void onCaptureImageResult(Intent data) {
         Bitmap bitmap = (Bitmap) data.getExtras().get("data");
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
 
-        imagestring = bitmapToBase64(bitmap);
-
-        /*ImageData imageForPost = new ImageData(imagestring,
-                mLastLocation.getTime(),
-                mLastLocation.getLatitude(),
-                mLastLocation.getLongitude());
-        mCameraFragment.imageFromSave(imageForPost);*/
-
         File destination = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
+
+        imagepath = "file://"+destination.toString();
+        getLocation();
         FileOutputStream fo;
         try {
             destination.createNewFile();
@@ -146,16 +165,5 @@ public class CameraPresenter implements CameraContract.Presenter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
-
-    private String bitmapToBase64(Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream .toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
-    }
-
-
 }

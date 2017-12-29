@@ -2,8 +2,6 @@ package by.test.dartlen.gallery.camera;
 
 import android.content.Intent;
 
-import java.io.File;
-
 import by.test.dartlen.gallery.BasePresenter;
 import by.test.dartlen.gallery.BaseView;
 
@@ -21,8 +19,9 @@ public interface CameraContract {
     }
     interface View extends BaseView<CameraContract.Presenter> {
         void setPresenter(Presenter presenter);
-        void showEror(Exception e, String image);
-        void showMessage(String message);
+        void showProgressDialog();
+        void dismissDialog();
+        void showToast(String message, int timetoast);
         void showCameraActivityResult(Intent intent, int CAPTURE_IMAGE_REQUEST_CODE);
     }
 }

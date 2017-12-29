@@ -1,8 +1,7 @@
 package by.test.dartlen.gallery.camera;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.location.LocationSettingsStates;
 
@@ -26,13 +26,15 @@ public class CameraFragment extends Fragment implements CameraContract.View {
 
     private CameraContract.Presenter mPresenter;
     private final static int REQUEST_CHECK_SETTINGS = 2000;
-    private static final int CAPTURE_IMAGE_REQUEST_CODE=1000;
+    private static final int CAPTURE_IMAGE_REQUEST_CODE = 1000;
+    private ProgressDialog progressDialog;
 
     public static CameraFragment newInstance() {
         return new CameraFragment();
     }
 
-    public CameraFragment(){}
+    public CameraFragment() {
+    }
 
     @Override
     public void setPresenter(CameraContract.Presenter presenter) {
@@ -47,29 +49,25 @@ public class CameraFragment extends Fragment implements CameraContract.View {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        progressDialog = new ProgressDialog(getContext());
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
     @Override
-    public void showEror(Exception e, String image) {
-
+    public void showProgressDialog() {
+        progressDialog.setTitle("Please wait");
+        progressDialog.setMessage("Uploading...");
+        progressDialog.show();
     }
 
     @Override
-    public void showMessage(String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setMessage(message);
-        builder.setCancelable(true);
+    public void dismissDialog() {
+        progressDialog.dismiss();
+    }
 
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog messageDialog = builder.create();
-        messageDialog.show();
+    @Override
+    public void showToast(String message, int timetoast) {
+        Toast.makeText(getActivity(), message, timetoast).show();
     }
 
     @Override
@@ -106,6 +104,4 @@ public class CameraFragment extends Fragment implements CameraContract.View {
             }
         }
     }
-
-
 }

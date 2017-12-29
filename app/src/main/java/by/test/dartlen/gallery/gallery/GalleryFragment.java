@@ -143,6 +143,18 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
     }
 
+    /*public void addItemToAdapter(ResponseDataImage dataResponse) {
+        listList = mapper.toImagesFromDataImages(dataResponse.getData());
+        paginationCounter += NUM_ITEMS_PAGE;
+        for (int i = paginationCounter - NUM_ITEMS_PAGE; i < paginationCounter; i++) {
+            progressBar.setVisibility(View.VISIBLE);
+            if (i < listList.size() && listList.get(i) != null)
+
+                musicRecyclerAdapter.add(listList.get(i));
+        }
+        isLoading=false;
+    }*/
+
     @Override
     public void showLogin(String login) {
         NavigationView navigationView = (NavigationView) getActivity().findViewById(R.id.nav_view);
