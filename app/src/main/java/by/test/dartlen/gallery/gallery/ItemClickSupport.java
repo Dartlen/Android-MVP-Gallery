@@ -4,7 +4,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.local.greendao.Images;
 
 /***
  * Created by Dartlen on 01.11.2017.

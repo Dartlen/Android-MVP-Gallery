@@ -5,11 +5,13 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.storage.UploadTask;
 
-import org.greenrobot.greendao.annotation.NotNull;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import by.test.dartlen.gallery.data.local.GalleryLocalDataSource;
 import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
+import by.test.dartlen.gallery.data.remote.GetImagesCallback;
+import by.test.dartlen.gallery.data.remote.Image;
 import by.test.dartlen.gallery.data.remote.PostImageCallback;
 
 /***
@@ -22,24 +24,19 @@ public class GalleryRepository{
 
     private final GalleryRemoteDataSource mGalleryRemoteDataSource;
 
-    private final GalleryLocalDataSource mGalleryLocalDataSource;
-
-    private GalleryRepository(@NonNull GalleryRemoteDataSource galleryRemoteDataSource,
-                               @NonNull GalleryLocalDataSource galleryLocalDataSource){
+    private GalleryRepository(@NonNull GalleryRemoteDataSource galleryRemoteDataSource){
         mGalleryRemoteDataSource = checkNotNull(galleryRemoteDataSource);
-        mGalleryLocalDataSource = checkNotNull(galleryLocalDataSource);
     }
 
-    public static GalleryRepository getInstance(GalleryRemoteDataSource galleryRemoteDataSource,
-                                                GalleryLocalDataSource galleryLocalDataSource){
+    public static GalleryRepository getInstance(GalleryRemoteDataSource galleryRemoteDataSource){
         if(INSTANCE == null){
-            INSTANCE = new GalleryRepository(galleryRemoteDataSource, galleryLocalDataSource);
+            INSTANCE = new GalleryRepository(galleryRemoteDataSource);
         }
 
         return INSTANCE;
     }
 
-    public void postImage(@NotNull final PostImageCallback callback, Uri fileUri, String fileName, final Double lat,
+    public void postImage(final PostImageCallback callback, Uri fileUri, String fileName, final Double lat,
                           final Double lng, final Long date, final String userid){
         mGalleryRemoteDataSource.postImage(new PostImageCallback() {
             @Override
@@ -62,6 +59,20 @@ public class GalleryRepository{
                 callback.onPaused(taskSnapshot);
             }
         },fileUri, fileName, lat, lng, date, userid);
+    }
+
+    public void getImages(final GetImagesCallback callback, String userid){
+       mGalleryRemoteDataSource.getImages(new GetImagesCallback() {
+           @Override
+           public void onImagesDataLoaded(List<Image> dataImages) {
+               callback.onImagesDataLoaded(dataImages);
+           }
+
+           @Override
+           public void onDataNotAvailable(String error) {
+                callback.onDataNotAvailable(error);
+           }
+       }, userid);
     }
 }
 

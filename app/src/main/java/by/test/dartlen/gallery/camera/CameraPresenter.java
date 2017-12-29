@@ -13,8 +13,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.UploadTask;
 
-import org.greenrobot.greendao.annotation.NotNull;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,8 +47,8 @@ public class CameraPresenter implements CameraContract.Presenter {
     private String imagename;
     private Long imagedate;
 
-    public CameraPresenter(@NotNull GalleryRepository galleryRepository, @NotNull CameraContract.View CameraView,
-                           @NotNull GoogleApiClient googleApiClient, @NotNull FirebaseAuth firebaseAuth){
+    public CameraPresenter(GalleryRepository galleryRepository,CameraContract.View CameraView,
+                           GoogleApiClient googleApiClient, FirebaseAuth firebaseAuth){
         mGalleryRepository = checkNotNull(galleryRepository,"gallery cannot be null");
         mCameraView        = checkNotNull(CameraView, "camerafragment cannot be null");
         mGoogleApiClient   = checkNotNull(googleApiClient, "googleapiclient cannot be null!");
@@ -68,7 +66,7 @@ public class CameraPresenter implements CameraContract.Presenter {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     mCameraView.dismissDialog();
-                    mCameraView.showToast( "Image Uploaded ", Toast.LENGTH_LONG);
+                    mCameraView.showToast( "ImageUtil Uploaded ", Toast.LENGTH_LONG);
                 }
 
                 @Override

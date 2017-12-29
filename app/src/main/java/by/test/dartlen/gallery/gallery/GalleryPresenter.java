@@ -4,8 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.List;
+
 import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.App;
+import by.test.dartlen.gallery.data.remote.GetImagesCallback;
+import by.test.dartlen.gallery.data.remote.Image;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -33,8 +37,18 @@ public class GalleryPresenter implements GalleryContract.Presenter {
     }
 
     @Override
-    public void loadFirstPage(int page) {
+    public void loadImages() {
+        mGalleryRepository.getImages(new GetImagesCallback() {
+            @Override
+            public void onImagesDataLoaded(List<Image> dataImages) {
+                mGalleryView.showImages(dataImages);
+            }
 
+            @Override
+            public void onDataNotAvailable(String error) {
+                //mGalleryView.showError();
+            }
+        }, mAuth.getUid());
     }
 
     @Override

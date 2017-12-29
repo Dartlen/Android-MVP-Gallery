@@ -13,6 +13,8 @@ public class Image {
     private Double lat;
     private Double lng;
 
+    public Image(){}
+
     public Image(String url, Long date, Double lat, Double lng){
         this.url  = url;
         this.date = date;

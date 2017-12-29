@@ -18,10 +18,12 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.App;
+import by.test.dartlen.gallery.data.remote.Image;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -33,7 +35,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
     private GalleryContract.Presenter mPresenter;
 
-    private ImageAdapter musicRecyclerAdapter;
+    private ImageAdapter mAdapter;
 
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -87,7 +89,7 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                 .setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                     @Override
                     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        App.INSTANCE.getRouter().navigateTo("picture", musicRecyclerAdapter.getItem(position));
+                        //App.INSTANCE.getRouter().navigateTo("picture", musicRecyclerAdapter.getItem(position));
                     }
                 });
 
@@ -102,11 +104,11 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
 
         recycleViewSetup(recyclerView);
 
-        musicRecyclerAdapter = new ImageAdapter(getContext());
+        mAdapter = new ImageAdapter(getContext());
 
-        recyclerView.setAdapter(musicRecyclerAdapter);
+        recyclerView.setAdapter(mAdapter);
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        /*recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
@@ -128,9 +130,9 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
                                 mPresenter.loadFirstPage(pagecounter);}
                         }
                 }*/
-            }
-        });
-        //mPresenter.loadFirstPage(pagecounter);
+          /*  }
+        });*/
+        mPresenter.loadImages();
 
         return root;
     }
@@ -161,6 +163,13 @@ public class GalleryFragment extends Fragment implements GalleryContract.View{
         View headerView = navigationView.getHeaderView(0);
         TextView navLogin = (TextView) headerView.findViewById(R.id.header_login);
         navLogin.setText(login);
+    }
+
+    @Override
+    public void showImages(List<Image> dataImages) {
+        mAdapter.clearAll();
+        mAdapter.notifyDataSetChanged();
+        mAdapter.setImages(dataImages);
     }
 }
 

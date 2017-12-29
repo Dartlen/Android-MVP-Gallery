@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.local.greendao.Images;
+import by.test.dartlen.gallery.data.remote.Image;
 
 /***
  * Created by Dartlen on 29.10.2017.
@@ -24,7 +24,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
 
-    private List<Images> ImagesList;
+    private List<Image> ImagesList;
     private Context context;
     private boolean isLoadingAdded = false;
 
@@ -64,10 +64,11 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (getItemViewType(position)) {
             case ITEM:
                 final ImageHolder image = (ImageHolder) holder;
-                Images animal = ImagesList.get(position);
+
+                Image currentImage = ImagesList.get(position);
                 DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                image.mTextView.setText(formatter.format(animal.getDate()));
-                image.bind(animal);
+                image.mTextView.setText(formatter.format(currentImage.getDate()));
+                image.bind(currentImage);
 
                 break;
 
@@ -87,18 +88,18 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return (position == ImagesList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
-    public void add(Images r) {
+    public void add(Image r) {
         ImagesList.add(r);
         notifyItemInserted(ImagesList.size() - 1);
     }
 
-    public void addAll(List<Images> imageslist) {
-        for (Images result : imageslist) {
+    public void addAll(List<Image> imageslist) {
+        for (Image result : imageslist) {
             add(result);
         }
     }
 
-    public void remove(Images r) {
+    public void remove(Image r) {
         int position = ImagesList.indexOf(r);
         if (position > -1) {
             ImagesList.remove(position);
@@ -120,14 +121,14 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Images());
+        add(new Image("",123L,2.2,2.2));
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
         int position = ImagesList.size() - 1;
-        Images result = getItem(position);
+        Image result = getItem(position);
 
         if (result != null && result.equals(getItem(0))) {
             ImagesList.remove(position);
@@ -135,7 +136,7 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         }
     }
 
-    public Images getItem(int position) {
+    public Image getItem(int position) {
         return ImagesList.get(position);
     }
 
@@ -144,6 +145,14 @@ public class ImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         public LoadingVH(View itemView) {
             super(itemView);
         }
+    }
+
+    public void clearAll(){
+        ImagesList=null;
+    }
+
+    public void setImages(List<Image> data){
+        ImagesList = data;
     }
 }
 

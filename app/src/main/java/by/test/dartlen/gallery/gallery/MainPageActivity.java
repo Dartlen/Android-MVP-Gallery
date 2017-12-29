@@ -136,13 +136,12 @@ public class MainPageActivity extends AppCompatActivity
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mAuth = FirebaseAuth.getInstance();
 
-        mGalleryRepository = Injection.provideGalleryRepository(getApplicationContext());
+        mGalleryRepository = Injection.provideGalleryRepository();
 
         if (mGalleryFragment == null) {
             mGalleryFragment = GalleryFragment.newInstance();
         }
         mGalleryPresenter = new GalleryPresenter(mGalleryRepository, mGalleryFragment, mAuth);
-
 
         if (mLoginFragment == null) {
             mLoginFragment = mLoginFragment.newInstance();
@@ -165,7 +164,7 @@ public class MainPageActivity extends AppCompatActivity
         if(mMapFragment == null) {
             mMapFragment = MapFragment.newInstance();
         }
-        mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment);
+        mMapPresenter = new MapPresenter(mGalleryRepository, mMapFragment, mAuth);
 
         if(mResetpswdFragment == null){
             mResetpswdFragment = ResetpswdFragment.newInstance();
@@ -218,10 +217,8 @@ public class MainPageActivity extends AppCompatActivity
         protected Fragment createFragment(String screenKey, Object data) {
             switch(screenKey) {
                 case "map":
-                    //enableViews(true);
                     return mMapFragment;
                 case "gallery":
-                    //enableViews(true);
                     return mGalleryFragment;
                 case "picture":
                     /*mPictureFragment = PictureFragment.newInstance();

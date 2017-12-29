@@ -5,15 +5,20 @@ import android.support.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.greenrobot.greendao.annotation.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /***
  * Created by Dartlen on 27.10.2017.
@@ -36,7 +41,7 @@ public class GalleryRemoteDataSource {
 
     public GalleryRemoteDataSource(){}
 
-    public void postImage(@NotNull final PostImageCallback callback, final Uri fileUri, final String fileName, final Double lat,
+    public void postImage(final PostImageCallback callback, final Uri fileUri, final String fileName, final Double lat,
                           final Double lng, final Long date, String userid){
         mDataReference = FirebaseDatabase.getInstance().getReference("images").child(userid);
         imageReference = FirebaseStorage.getInstance().getReference().child("images").child(userid);
@@ -49,7 +54,7 @@ public class GalleryRemoteDataSource {
                         String name = taskSnapshot.getMetadata().getName();
                         String url = taskSnapshot.getDownloadUrl().toString();
 
-                        writeNewImageInfoToDB(fileUri.toString(), lat, lng, date);
+                        writeNewImageInfoToDB(url, lat, lng, date);
                         callback.onSuccess(taskSnapshot);
                     }
                 })
@@ -78,6 +83,25 @@ public class GalleryRemoteDataSource {
 
         String key = mDataReference.push().getKey();
         mDataReference.child(key).setValue(info);
+    }
+
+    public void getImages(final GetImagesCallback callback, String userid){
+        mDataReference = FirebaseDatabase.getInstance().getReference("images").child(userid);
+        mDataReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                GenericTypeIndicator<HashMap<String,Image>> dataImages = new GenericTypeIndicator<HashMap<String,Image>>(){};
+                HashMap<String,Image> listResult = dataSnapshot.getValue(dataImages);
+                if(listResult!=null)
+                    callback.onImagesDataLoaded(new ArrayList<Image>(listResult.values()));
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onDataNotAvailable(databaseError.getMessage());
+            }
+        });
     }
 }
 

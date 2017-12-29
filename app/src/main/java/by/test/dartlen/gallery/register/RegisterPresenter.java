@@ -7,7 +7,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.greenrobot.greendao.annotation.NotNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +23,7 @@ public class RegisterPresenter implements RegisterContract.Presenter{
 
     private final RegisterContract.View mRegisterView;
 
-    public RegisterPresenter(@NotNull RegisterContract.View registerView, @NonNull FirebaseAuth firebaseAuth){
+    public RegisterPresenter(RegisterContract.View registerView, @NonNull FirebaseAuth firebaseAuth){
         mRegisterView = checkNotNull(registerView,"registerView cannot be null");
 
         mRegisterView.setPresenter(this);

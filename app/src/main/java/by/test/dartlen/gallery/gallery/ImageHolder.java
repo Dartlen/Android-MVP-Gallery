@@ -16,8 +16,8 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.util.Image;
+import by.test.dartlen.gallery.data.remote.Image;
+import by.test.dartlen.gallery.util.ImageUtil;
 
 
 public class ImageHolder extends RecyclerView.ViewHolder {
@@ -44,8 +44,8 @@ public class ImageHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(@NonNull Images images) {
-        Image.loadImage(mImageView, images.getUrl());
+    public void bind(@NonNull Image image) {
+        ImageUtil.loadImage(mImageView, image.getUrl());
     }
 }
 

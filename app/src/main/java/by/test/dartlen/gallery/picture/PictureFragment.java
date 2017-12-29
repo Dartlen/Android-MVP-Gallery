@@ -15,13 +15,12 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import by.test.dartlen.gallery.R;
-import by.test.dartlen.gallery.data.local.greendao.Images;
-import by.test.dartlen.gallery.util.Image;
+import by.test.dartlen.gallery.data.remote.Image;
+import by.test.dartlen.gallery.util.ImageUtil;
 
 import static com.google.gson.internal.$Gson$Preconditions.checkNotNull;
 
@@ -106,10 +105,10 @@ public class PictureFragment extends Fragment implements PictureContract.View {
     }
 
     @Override
-    public void showPicture(Images imageData) {
+    public void showPicture(Image imageData) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         textView.setText(formatter.format(imageData.getDate()));
-        Image.loadImage(imagePicture, imageData);
+        ImageUtil.loadImage(imagePicture, imageData);
     }
 
 
