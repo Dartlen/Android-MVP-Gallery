@@ -37,7 +37,7 @@ public class GalleryRepository{
     }
 
     public void postImage(final PostImageCallback callback, Uri fileUri, String fileName, final Double lat,
-                          final Double lng, final Long date, final String userid){
+                          final Double lng, final Long date,@NonNull String userid){
         mGalleryRemoteDataSource.postImage(new PostImageCallback() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

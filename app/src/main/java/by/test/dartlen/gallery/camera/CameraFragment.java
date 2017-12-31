@@ -1,18 +1,26 @@
 package by.test.dartlen.gallery.camera;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.location.LocationSettingsStates;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import by.test.dartlen.gallery.R;
 
@@ -50,6 +58,9 @@ public class CameraFragment extends Fragment implements CameraContract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         progressDialog = new ProgressDialog(getContext());
+        if(checkAndRequestPermissions()) {
+
+        }
         return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
@@ -81,6 +92,27 @@ public class CameraFragment extends Fragment implements CameraContract.View {
         startActivityForResult(intent, CAPTURE_IMAGE_REQUEST_CODE);
     }
 
+    private  boolean checkAndRequestPermissions() {
+        int writePermission = ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        int readPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (readPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (writePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(getActivity(), listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),1);
+            return false;
+        }
+        return true;
+    }
+
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
@@ -89,6 +121,7 @@ public class CameraFragment extends Fragment implements CameraContract.View {
                 switch (resultCode) {
                     case Activity.RESULT_OK:
                         mPresenter.getLocation();
+
                         break;
                     case Activity.RESULT_CANCELED:
                         break;
@@ -97,6 +130,7 @@ public class CameraFragment extends Fragment implements CameraContract.View {
                 }
                 break;
         }
+
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_REQUEST_CODE) {

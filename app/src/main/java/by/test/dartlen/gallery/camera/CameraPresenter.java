@@ -62,6 +62,7 @@ public class CameraPresenter implements CameraContract.Presenter {
             startCamera();
         else{
             mCameraView.showProgressDialog();
+            mCameraView.showToast(imagedate.toString(),Toast.LENGTH_LONG);
             mGalleryRepository.postImage(new PostImageCallback() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -83,13 +84,14 @@ public class CameraPresenter implements CameraContract.Presenter {
                 public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
 
                 }
-            }, Uri.parse(imagepath), imagename, latitude, longitude, imagedate, mAuth.getCurrentUser().getUid() );
+            }, Uri.parse(imagepath), imagename, latitude, longitude, imagedate, mAuth.getUid());
             App.INSTANCE.getRouter().navigateTo("gallery");
         }
     }
 
     @Override
     public void startCamera() {
+
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = getOutputMediaFile(IMAGE);
 
@@ -133,7 +135,7 @@ public class CameraPresenter implements CameraContract.Presenter {
         File mediaFile;
         if(type==IMAGE)
         {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+            mediaFile = new File(mediaStorageDir.getPath()+ File.separator + "IMG_" + timeStamp + ".jpg");
         }
         else
         {
@@ -147,8 +149,10 @@ public class CameraPresenter implements CameraContract.Presenter {
 
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        File wallpaperDirectory = new File(Environment.getExternalStorageDirectory()+"/DCIM/Gallery/");
 
-        File destination = new File(Environment.getExternalStorageDirectory(), System.currentTimeMillis() + ".jpg");
+        wallpaperDirectory.mkdirs();
+        File destination = new File(Environment.getExternalStorageDirectory()+"/GalleryByDartlen/", System.currentTimeMillis() + ".jpg");
 
         imagepath = "file://"+destination.toString();
         getLocation();

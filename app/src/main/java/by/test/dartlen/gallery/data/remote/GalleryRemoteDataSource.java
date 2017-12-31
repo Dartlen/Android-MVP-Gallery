@@ -18,6 +18,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /***
@@ -42,10 +43,10 @@ public class GalleryRemoteDataSource {
     public GalleryRemoteDataSource(){}
 
     public void postImage(final PostImageCallback callback, final Uri fileUri, final String fileName, final Double lat,
-                          final Double lng, final Long date, String userid){
+                          final Double lng, final Long date, @NonNull String userid){
         mDataReference = FirebaseDatabase.getInstance().getReference("images").child(userid);
         imageReference = FirebaseStorage.getInstance().getReference().child("images").child(userid);
-        fileRef = imageReference.child(fileName);
+        fileRef = imageReference.child(userid+date);
         fileRef.putFile(fileUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -54,7 +55,7 @@ public class GalleryRemoteDataSource {
                         String name = taskSnapshot.getMetadata().getName();
                         String url = taskSnapshot.getDownloadUrl().toString();
 
-                        writeNewImageInfoToDB(url, lat, lng, date);
+                        writeNewImageInfoToDB(url, lat, lng, new Date().getTime());
                         callback.onSuccess(taskSnapshot);
                     }
                 })
