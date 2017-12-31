@@ -9,7 +9,7 @@ This is simple Android MVP demo gallery. Here we are using following technologie
 
 2.[Retrofit](https://github.com/square/retrofit);
 
-3.[GreenDAO](https://github.com/greenrobot/greenDAO);
+3.Firebase database, storage, auth;
 
 4.[Picasso](https://github.com/square/picasso);
 
