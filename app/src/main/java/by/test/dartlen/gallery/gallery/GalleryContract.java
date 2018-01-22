@@ -17,10 +17,15 @@ public interface GalleryContract {
         void loadImages();
         void onBackPressed();
         void onClickedFab();
+        void onItemLongClicked(int data);
+        void onClickedQuestionOk();
+        void onClickedQuestionCancel();
     }
 
     interface View extends BaseView<GalleryContract.Presenter> {
         void showLogin(String login);
         void showImages(List<Image> dataImages);
+        void showDialogQuestion();
+        void hideQuestionDialog();
     }
 }

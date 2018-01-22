@@ -10,6 +10,7 @@ import by.test.dartlen.gallery.data.GalleryRepository;
 import by.test.dartlen.gallery.App;
 import by.test.dartlen.gallery.data.remote.GetImagesCallback;
 import by.test.dartlen.gallery.data.remote.Image;
+import by.test.dartlen.gallery.data.remote.RemovePhotoCallback;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,6 +23,8 @@ public class GalleryPresenter implements GalleryContract.Presenter {
     private GalleryRepository mGalleryRepository;
     private GalleryContract.View mGalleryView;
     private FirebaseAuth mAuth;
+    private List<Image> dataImg;
+    private Image foremove;
 
     public GalleryPresenter(@NonNull GalleryRepository galleryRepository, @NonNull GalleryContract.View galleryView,
                             @NonNull FirebaseAuth firebaseAuth){
@@ -41,6 +44,7 @@ public class GalleryPresenter implements GalleryContract.Presenter {
         mGalleryRepository.getImages(new GetImagesCallback() {
             @Override
             public void onImagesDataLoaded(List<Image> dataImages) {
+                dataImg=dataImages;
                 mGalleryView.showImages(dataImages);
             }
 
@@ -59,5 +63,32 @@ public class GalleryPresenter implements GalleryContract.Presenter {
     @Override
     public void onClickedFab() {
         App.INSTANCE.getRouter().navigateTo("camera");
+    }
+
+    @Override
+    public void onItemLongClicked(int position) {
+        foremove = dataImg.get(position);
+        mGalleryView.showDialogQuestion();
+    }
+
+    @Override
+    public void onClickedQuestionOk() {
+        mGalleryRepository.removePhoto(new RemovePhotoCallback() {
+            @Override
+            public void onRemoved(List<Image> dataImages) {
+                mGalleryView.hideQuestionDialog();
+            }
+
+            @Override
+            public void onDataNotAvailable(String error) {
+
+            }
+        },foremove, mAuth.getUid() );
+
+    }
+
+    @Override
+    public void onClickedQuestionCancel() {
+        mGalleryView.hideQuestionDialog();
     }
 }

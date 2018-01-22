@@ -13,6 +13,7 @@ import by.test.dartlen.gallery.data.remote.GalleryRemoteDataSource;
 import by.test.dartlen.gallery.data.remote.GetImagesCallback;
 import by.test.dartlen.gallery.data.remote.Image;
 import by.test.dartlen.gallery.data.remote.PostImageCallback;
+import by.test.dartlen.gallery.data.remote.RemovePhotoCallback;
 
 /***
  * Created by Dartlen on 26.10.2017.
@@ -73,6 +74,20 @@ public class GalleryRepository{
                 callback.onDataNotAvailable(error);
            }
        }, userid);
+    }
+
+    public void removePhoto(final RemovePhotoCallback callback, Image image, String userid){
+        mGalleryRemoteDataSource.removePhoto(new RemovePhotoCallback() {
+            @Override
+            public void onRemoved(List<Image> dataImages) {
+                callback.onRemoved(dataImages);
+            }
+
+            @Override
+            public void onDataNotAvailable(String error) {
+                callback.onDataNotAvailable(error);
+            }
+        }, image, userid);
     }
 }
 

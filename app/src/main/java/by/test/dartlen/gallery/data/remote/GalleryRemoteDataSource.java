@@ -2,6 +2,7 @@ package by.test.dartlen.gallery.data.remote;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -10,6 +11,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
@@ -20,6 +22,7 @@ import com.google.firebase.storage.UploadTask;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /***
  * Created by Dartlen on 27.10.2017.
@@ -101,6 +104,45 @@ public class GalleryRemoteDataSource {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 callback.onDataNotAvailable(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void removePhoto(final RemovePhotoCallback callback, Image image, String userid){
+
+        mDataReference = FirebaseDatabase.getInstance().getReference("images").child(userid);
+        Query applesQuery = mDataReference.orderByChild("url").equalTo(image.getUrl());
+
+
+        applesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot x: dataSnapshot.getChildren()){
+                    x.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("failed", "onFailure: ");
+            }
+        });
+
+        FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance().getReference().getStorage();
+
+        StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(image.getUrl());
+
+        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                // File deleted successfully
+                Log.d("okkkk", "onSuccess: deleted file");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Uh-oh, an error occurred!
+                Log.d("failed", "onFailure: did not delete file");
             }
         });
     }
